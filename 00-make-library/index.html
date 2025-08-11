@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>선언적 프로그래밍 방식의 라이브러리 만들기</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="module" src="./scripts/main.js"></script>
   </head>
   <body>
     <!-- 컨테이너(container) <- 동적 생성된 요소 객체 마운트 -->
@@ -26,120 +27,20 @@
         //    - Euid.createElement(elementType, properties, ...children)
         //    - EuidDOM.createRoot(container)
 
-        // 1 ---------------------------------------------------------------------
         // Euid.createElement(elementType, properties, ...children)
         const Euid = Object.freeze({
           createElement(elementType, properties = {}, ...children) {
-            // 요소 생성
-            const element = document.createElement(elementType);
-
-            // 속성({ key: value, ... }) 순환해서 요소에 설정
-            // JavaScript 객체(키, 값의 집합)를 순환하려면? -> Object.entries(object) -> Iterable Protocol
-            // for...of 문
-            for (let [key, value] of Object.entries(properties)) {
-              if (key.includes("className")) key = "class";
-              element.setAttribute(key, value);
-            }
-
-            // 전달된 children 배열을 요소의 자식들로 구성
-            element.append(...children);
-
-            // children.forEach((child) => {
-            //   if (typeof child === 'string') {
-            //     // 조건 1. 텍스트(string)인 경우
-            //     // console.log('child = string')
-            //     element.textContent = element.textContent + child
-            //   } else {
-            //     // 조건 2. 요소(ElementNode)인 경우
-            //     // console.log('child = element')
-            //     element.appendChild(child)
-            //   }
-            // })
-
-            return element;
+            console.log(`elementType`, elementType);
+            console.log(`properties`, properties);
+            console.log(`children`, children);
           },
         });
 
         // <section class="bunx-introduction"></section>
-        const sectionElement = Euid.createElement(
-          "section",
-          { className: "bunx-introduction" },
-          // children
-          // h1
-          Euid.createElement(
-            "h1",
-            {},
-            Euid.createElement("code", {}, "bunx"),
-            " 명령"
-          ),
-          // p
-          Euid.createElement(
-            "p",
-            {},
-            Euid.createElement(
-              "a",
-              {
-                href: "https://bun.sh",
-                rel: "noopener noreferrer",
-                target: "_blank",
-              },
-              "Bun"
-            ),
-            "의 빠른 시작 덕분에, ",
-            Euid.createElement("code", {}, "bunx"),
-            "는 로컬에 설치된 패키지 실행 시 ",
-            Euid.createElement("code", {}, "npx"),
-            "보다 약 100배 빠릅니다."
-          )
-        );
-        // console.log(sectionElement)
-
-        // 2 ----------------------------------------------------------------------
-        // EuidDOM.createRoot(container)
-
-        // EuidDOMRoot 클래스(Class : Blueprint) 정의
-        class EuidDOMRoot {
-          #container = null;
-
-          constructor(container) {
-            this.#container = container;
-          }
-
-          render /* mount */(element) {
-            this.#container.append(element);
-          }
-
-          unmount() {
-            this.#container.firstElementChild.remove();
-          }
-        }
-
-        const EuidDOM = Object.freeze({
-          createRoot(container) {
-            if (container?.nodeType !== document.ELEMENT_NODE) {
-              throw new Error(
-                "EuidDOM.createRoot() 함수에는 실제 DOM 요소 노드가 전달되어야 합니다."
-              );
-            }
-
-            // EuidDOMRoot 클래스 정의 -> EuildDOMRoot 객체(인스턴스) 생성
-            return new EuidDOMRoot(container);
-
-            // 일반 객체
-            // - render 또는 mount()
-            // - unmount()
-            // return {
-            //   render() {},
-            //   unmount() {}
-            // }
-          },
+        const element = Euid.createElement("section", {
+          className: "bunx-introduction",
         });
-
-        const container = document.querySelector("main");
-        const euidDomRoot = EuidDOM.createRoot(container);
-
-        // 컨테이너(실제 DOM 요소)에 엘리먼트 마운트
-        euidDomRoot.render(sectionElement);
+        console.log(element);
       }
     </script>
 
