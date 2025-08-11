@@ -26,6 +26,7 @@
         //    - Euid.createElement(elementType, properties, ...children)
         //    - EuidDOM.createRoot(container)
 
+        // 1 ---------------------------------------------------------------------
         // Euid.createElement(elementType, properties, ...children)
         const Euid = Object.freeze({
           createElement(elementType, properties = {}, ...children) {
@@ -91,15 +92,54 @@
             "보다 약 100배 빠릅니다."
           )
         );
-        console.log(sectionElement);
+        // console.log(sectionElement)
 
-        // <section class="bunx-introduction">
-        //   <h1><code>bunx</code> 명령</h1>
-        //   <p>
-        //     <a href="https://bun.sh" target="_blank" rel="noopener noreferrer">Bun</a>
-        //     의 빠른 시작 덕분에, <code>bunx</code>는 로컬에 설치된 패키지 실행 시 <code>npx</code>보다 약 100배 빠릅니다.
-        //   </p>
-        // </section>
+        // 2 ----------------------------------------------------------------------
+        // EuidDOM.createRoot(container)
+
+        // EuidDOMRoot 클래스(Class : Blueprint) 정의
+        class EuidDOMRoot {
+          #container = null;
+
+          constructor(container) {
+            this.#container = container;
+          }
+
+          render /* mount */(element) {
+            this.#container.append(element);
+          }
+
+          unmount() {
+            this.#container.firstElementChild.remove();
+          }
+        }
+
+        const EuidDOM = Object.freeze({
+          createRoot(container) {
+            if (container?.nodeType !== document.ELEMENT_NODE) {
+              throw new Error(
+                "EuidDOM.createRoot() 함수에는 실제 DOM 요소 노드가 전달되어야 합니다."
+              );
+            }
+
+            // EuidDOMRoot 클래스 정의 -> EuildDOMRoot 객체(인스턴스) 생성
+            return new EuidDOMRoot(container);
+
+            // 일반 객체
+            // - render 또는 mount()
+            // - unmount()
+            // return {
+            //   render() {},
+            //   unmount() {}
+            // }
+          },
+        });
+
+        const container = document.querySelector("main");
+        const euidDomRoot = EuidDOM.createRoot(container);
+
+        // 컨테이너(실제 DOM 요소)에 엘리먼트 마운트
+        euidDomRoot.render(sectionElement);
       }
     </script>
 
