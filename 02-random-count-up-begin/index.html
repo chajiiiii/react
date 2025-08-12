@@ -114,7 +114,11 @@
         // console.log(ORIGIN_TITLE);
 
         // 목표 카운트 targetCount 설정
-        const targetCount = getRandomMinMax();
+        let targetCount;
+
+        function setTargetCount() {
+          return getRandomMinMax();
+        }
         // console.log(targetCount);
 
         // 문서 타이틀 업데이트 함수(기능) 추가
@@ -235,6 +239,7 @@
         // play 함수
         function play() {
           setDocumentTitle();
+          setTargetCount();
           setAppRandomHue();
           animate();
         }
@@ -243,6 +248,7 @@
         // - 카운트 업 애니메이션 리플레이
         function replay() {
           count = 0;
+          targetCount = getRandomMinMax();
           play();
         }
 
