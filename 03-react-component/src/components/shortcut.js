@@ -1,4 +1,4 @@
-export function ShortcutFunction() {
+export default function ShortcutFunction() {
   const shortcutElement = React.createElement(
     "p",
     { className: "shortcut-info" },

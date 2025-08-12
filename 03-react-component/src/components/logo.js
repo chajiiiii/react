@@ -1,7 +1,7 @@
 // logoElement === React.ReactElement
 // React Component Type
 
-export function LogoFunction() {
+export default function LogoFunction() {
   const logoElement = React.createElement(
     "svg",
     {
