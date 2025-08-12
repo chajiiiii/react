@@ -1,3 +1,12 @@
 export default function Output(props) {
-  return React.createElement("output", { className: "output" }, props.children);
+  let classNames = "output";
+
+  if (props.isAnimate) {
+    classNames += " is-animate";
+  }
+  return React.createElement(
+    "output",
+    { className: classNames },
+    props.children
+  );
 }
