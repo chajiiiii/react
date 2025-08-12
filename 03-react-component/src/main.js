@@ -1,4 +1,4 @@
-import { LogoFunction } from "./components/logo.js";
+import App from "./app.js";
 
 const MIN = 30,
   MAX = 99;
@@ -37,23 +37,8 @@ if (!container) throw new Error("문서에 #container 요소가 존재하지 않
 
 const reactDOMRoot = ReactDOM.createRoot(container);
 
-const shortcutElement = React.createElement(
-  "p",
-  { className: "shortcut-info" },
-  React.createElement("code", {}, "Shift + Enter"),
-  " 키를 누르면 애니메이션이 다시 시작됩니다."
-);
-
 function render() {
-  const app = React.createElement(
-    "div",
-    { className: "randomCountUpApp" },
-    React.createElement(LogoFunction),
-    React.createElement("output", { className: "output" }, count),
-    shortcutElement
-  );
-
-  reactDOMRoot.render(app);
+  reactDOMRoot.render(React.createElement(App, { count }));
 }
 
 let animateId;
