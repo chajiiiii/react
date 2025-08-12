@@ -55,16 +55,20 @@ export default function App(props) {
     "div",
     { className: "randomCountUpApp" },
     React.createElement(Logo),
-    Array.from({ length: 3 }).map((_, index) =>
-      React.createElement(
-        Output,
-        {
-          key: index,
-          isAnimate: props.count < props.targetCount ? true : false,
-        },
-        props.count + index
-      )
-    ),
+    renderLists(3, props),
     React.createElement(Shortcut)
+  );
+}
+
+function renderLists(length, props) {
+  return Array.from({ length }).map((_, index) =>
+    React.createElement(
+      Output,
+      {
+        key: crypto.randomUUID(),
+        isAnimate: props.count < props.targetCount ? true : false,
+      },
+      props.count + index
+    )
   );
 }
