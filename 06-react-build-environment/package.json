@@ -5,7 +5,9 @@
   "description": "리액트 빌드 환경을 구성합니다.",
   "version": "1.0.0",
   "scripts": {
-    "dev": "bun index.html"
+    "dev": "bun index.html",
+    "format:check": "prettier --check --cache \"src/**/*.{js,jsx,json}\"",
+    "format:fix": "prettier --write --cache --list-different \"src/**/*.{js,jsx,json}\""
   },
   "engines": {
     "bun": ">=1.0.0"
