@@ -1,8 +1,5 @@
-import React from 'react'
+import './demo'
 import './styles/main.css'
 
-const container = document.getElementById('container')
-
-React.createElement('canvas')
-
-// import.meta.hot.accept();
+// HMR 기능 활성
+// import.meta.hot.accept()
