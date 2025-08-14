@@ -1,0 +1,21 @@
+{
+  "private": true,
+  "type": "module",
+  "name": "react-build-environment",
+  "description": "리액트 빌드 환경을 구성합니다.",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "bun index.html"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7"
+  }
+}
