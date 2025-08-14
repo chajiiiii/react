@@ -10,3 +10,4 @@ quoteProps = 'consistent'
 bracketSameLine = false
 bracketSpacing = true
 htmlWhitespaceSensitivity = 'css'
+endOfLine = "lf"

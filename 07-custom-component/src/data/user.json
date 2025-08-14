@@ -1,7 +1,23 @@
-{
-  "id": "user-han-di1k",
-  "name": "한주아",
-  "age": 27,
-  "phoneNumber": "010-1234-5678",
-  "address": "서울시 강남구 테헤란로 123"
-}
+[
+  {
+    "id": "user-han-di1k",
+    "name": "한주아",
+    "age": 27,
+    "phoneNumber": "010-1234-5678",
+    "address": "서울시 강남구 테헤란로 123"
+  },
+  {
+    "id": "user-han-de23",
+    "name": "박지성",
+    "age": 27,
+    "phoneNumber": "010-1234-5678",
+    "address": "서울시 강남구 테헤란로 123"
+  },
+  {
+    "id": "user-han-fe13",
+    "name": "홍명보",
+    "age": 27,
+    "phoneNumber": "010-1234-5678",
+    "address": "서울시 강남구 테헤란로 123"
+  }
+]

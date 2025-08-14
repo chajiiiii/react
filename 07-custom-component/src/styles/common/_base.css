@@ -1,6 +1,8 @@
 body {
-  margin: 0;
-  min-block-size: 100dvh;
+  color-scheme: light dark;
+  overflow-y: scroll;
+  background-color: var(--color-background);
+  color: var(--color-text);
 }
 
 abbr[title] {
