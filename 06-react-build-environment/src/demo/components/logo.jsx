@@ -1,5 +1,3 @@
-import React from 'react'
-
 export default function Logo() {
   return (
     <svg className="logo" aria-label="리액트" viewBox="0 0 21 21" fill="none">

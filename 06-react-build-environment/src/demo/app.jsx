@@ -1,4 +1,3 @@
-import React from 'react'
 import { Output, Logo, ShortcutInfo } from './components'
 import './app.css'
 
