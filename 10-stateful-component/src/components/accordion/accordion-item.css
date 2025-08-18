@@ -1,0 +1,17 @@
+.accordion-item {
+  margin-block: 1rem;
+  border-radius: 12px;
+  padding: 1rem;
+  background-color: #edf4ff;
+  color: #191f28;
+
+  display: flex;
+  flex-flow: column;
+  gap: 8px;
+
+  dd {
+    margin-inline-start: 0;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+}
