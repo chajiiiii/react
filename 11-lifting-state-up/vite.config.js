@@ -1,5 +1,5 @@
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production'
 
   return {
-    plugins: [react(), viteCompression()],
+    plugins: [react(), tailwindcss(), viteCompression()],
     server: {
       port: 3000,
       hmr: !isProduction,
