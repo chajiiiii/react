@@ -1,0 +1,28 @@
+.manage-array-state {
+  max-width: 400px;
+  margin: 4rem auto;
+
+  output {
+    display: block;
+    margin-block: 20px;
+    padding: 8px 12px;
+    border: 2px solid;
+    border-radius: 4px;
+  }
+
+  [role='group'] {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: start;
+    gap: 6px;
+    margin: 2rem 0;
+
+    &[data-layout-row] {
+      flex-direction: row;
+    }
+
+    input {
+      width: 100px;
+    }
+  }
+}
