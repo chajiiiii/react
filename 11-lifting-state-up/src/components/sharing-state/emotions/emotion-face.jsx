@@ -1,9 +1,9 @@
 import './emotion-face.css'
 
-export default function EmotionFace() {
+export default function EmotionFace({ face }) {
   return (
     <figure className="emotion-face">
-      <img src="/assets/emotions/good.jpg" alt="" width={85} height={77} />
+      <img src={`/assets/emotions/${face}.jpg`} alt="" width={85} height={77} />
     </figure>
   )
 }

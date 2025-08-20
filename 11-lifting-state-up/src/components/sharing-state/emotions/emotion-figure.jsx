@@ -1,11 +1,11 @@
 import EmotionFace from './emotion-face'
 import StatusMessage from './status-message'
 
-export default function EmotionFigure() {
+export default function EmotionFigure({ info }) {
   return (
     <>
-      <EmotionFace />
-      <StatusMessage />
+      <EmotionFace face={info.key} />
+      <StatusMessage>{info.message}</StatusMessage>
     </>
   )
 }

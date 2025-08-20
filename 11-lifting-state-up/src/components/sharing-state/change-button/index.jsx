@@ -1,23 +1,15 @@
-import { useState } from 'react'
-import emotions from '@/data/emotions.json'
 import './style.css'
 
-export default function ChangeButton() {
-  const [randomIndex, setRandomIndex] = useState(
-    getRandomIndex(emotions.length)
-  )
-
-  const handleClick = () => {
-    setRandomIndex(getRandomIndex(emotions.length))
-  }
-
+/**
+ * ChangeButton 컴포넌트
+ * @param {Object} props
+ * @param {string} props.message - 감정 메시지
+ * @param {() => void} props.onUpdate - 랜덤 인덱스 상태 업데이트 함수
+ */
+export default function ChangeButton({ message, onUpdate }) {
   return (
-    <button type="button" className="change-button" onClick={handleClick}>
-      {emotions[randomIndex].message}
+    <button type="button" className="change-button" onClick={onUpdate}>
+      {message}
     </button>
   )
-}
-
-function getRandomIndex(limit) {
-  return Math.floor(Math.random() * limit)
 }
