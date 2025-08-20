@@ -1,8 +1,7 @@
-import { useState } from 'react'
 import './counter.css'
 
-export default function Counter() {
-  const [count, setCount] = useState(0)
+export default function Counter({ count = 0, setCount = () => {} }) {
+  console.log('Counter rendered')
 
   return (
     <button
