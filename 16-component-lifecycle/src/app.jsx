@@ -40,7 +40,7 @@ export default function App() {
         Practice {!isShown ? '마운트' : '언마운트'}
       </label>
 
-      {isShown && <Practice />}
+      {isShown && <Practice email={email} />}
     </section>
   )
 }
