@@ -1,16 +1,19 @@
 import { useState } from 'react'
+import { useImmer } from 'use-immer'
 import './style.css'
 
 const INITIAL_ARRAY_STATE = ['A', 'B', 'C']
+const INITIAL_INSERT_STATE = { index: 0, value: '', z: { y: { k: { p: 0 } } } }
 
 export default function ManageArrayState() {
-  const [arrayState, setArrayState] = useState(INITIAL_ARRAY_STATE)
+  const [arrayState, setArrayState] = useImmer(INITIAL_ARRAY_STATE)
+
   const maxValue = arrayState.length - 1
 
   const handleRemoveFirstItem = () => {
-    if (arrayState.length === 0) return
-    const [, ...nextArrayState] = arrayState
-    setArrayState(nextArrayState)
+    setArrayState((draft) => {
+      draft.shift()
+    })
   }
 
   const handleRemoveB = () => {
@@ -19,13 +22,15 @@ export default function ManageArrayState() {
   }
 
   const handleAddFirstX = () => {
-    const nextArrayState = ['X', ...arrayState]
-    setArrayState(nextArrayState)
+    setArrayState((draft) => {
+      draft.unshift('X')
+    })
   }
 
   const handleAddLastY = () => {
-    const nextArrayState = [...arrayState, 'Y']
-    setArrayState(nextArrayState)
+    setArrayState((draft) => {
+      draft.push('Y')
+    })
   }
 
   const handleAllClear = () => {
@@ -58,24 +63,26 @@ export default function ManageArrayState() {
     if (e.key === 'Enter') handleAddFirstValue()
   }
 
-  const [insertValue, setInsertValue] = useState('')
-  const [insertIndex, setInsertIndex] = useState(0)
+  const [insertState, setInsertState] = useImmer(INITIAL_INSERT_STATE)
+
+  console.log(insertState.z.y.k.p)
 
   const handleInsertValueAtIndex = () => {
+    const { index, value } = insertState
+
     const nextArrayState = [
-      ...arrayState.slice(0, insertIndex),
-      insertValue,
-      ...arrayState.slice(insertIndex),
+      ...arrayState.slice(0, index),
+      value,
+      ...arrayState.slice(index),
     ]
 
     setArrayState(nextArrayState)
-    setInsertValue('')
-    setInsertIndex(0)
+    setInsertState(INITIAL_INSERT_STATE)
   }
 
   return (
     <section className="manage-array-state">
-      <h2>배열 상태 관리 실습</h2>
+      <h2>배열 상태 관리 실습 (immer)</h2>
 
       <output>
         <strong>배열 상태</strong> : {arrayState.join(', ')}
@@ -122,18 +129,41 @@ export default function ManageArrayState() {
         <input
           type="text"
           placeholder="추가할 값"
-          value={insertValue}
-          onChange={(e) => setInsertValue(e.target.value)}
+          value={insertState.value}
+          onChange={(e) => {
+            setInsertState((draft) => {
+              draft.value = e.target.value
+              // useImmer 훅을 사용해 상태를 관리할 경우
+              draft.z.y.k.p += 1
+
+              // 리액트의 불변성 유지를 위해 작성해야 할 코드
+              // return {
+              //   ...draft,
+              //   z: {
+              //     ...draft.z,
+              //     y: {
+              //       ...draft.z.y,
+              //       k: {
+              //         ...draft.z.y.k,
+              //         p: draft.z.y.k.p + 1,
+              //       },
+              //     },
+              //   },
+              // }
+            })
+          }}
         />
         <input
           type="number"
           placeholder="인덱스"
           min={0}
           max={maxValue}
-          value={insertIndex}
+          value={insertState.index}
           onInput={(e) => {
-            const index = Number(e.target.value)
-            setInsertIndex(index)
+            setInsertState((draft) => {
+              draft.index = Number(e.target.value)
+              draft.z.y.k.p -= 1
+            })
           }}
         />
         <button type="button" onClick={handleInsertValueAtIndex}>
