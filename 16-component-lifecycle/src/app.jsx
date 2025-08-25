@@ -7,6 +7,10 @@ export default function App() {
   const [isVisible, setIsVisible] = useState(true)
   const handleInput = (e) => setIsVisible(e.target.checked)
 
+  const [inputValue, setInputValue] = useState('Child 컴포넌트')
+  const [headline, setHeadline] = useState('사자 보이즈')
+  const updateHeadline = () => setHeadline((h) => h + '🦁')
+
   return (
     <LearnSection
       className="p-10"
@@ -21,7 +25,14 @@ export default function App() {
         />
         Child 컴포넌트 표시 ({isVisible.toString()})
       </label>
-      {isVisible ? <Child /> : null}
+      {isVisible ? (
+        <Child
+          headline={headline}
+          updateHeadline={updateHeadline}
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+        />
+      ) : null}
     </LearnSection>
   )
 }
@@ -30,19 +41,19 @@ export default function App() {
 // 1. 생성(mount)
 // 2. 변경(update) x N
 // 0. 소멸(unmount)
-function Child() {
+function Child({ headline, updateHeadline, inputValue, setInputValue }) {
   console.log('Child 렌더링')
-
-  const [headline, setHeadline] = useState('Child 컴포넌트')
 
   return (
     <article className="mt-5 p-5 border-2 border-inherit">
-      <h2>{headline}</h2>
-      <button
-        type="button"
-        className="button"
-        onClick={() => setHeadline((h) => h + '🦁')}
-      >
+      <h2 className="text-xl font-extrabold mb-2">{headline}</h2>
+      <input
+        type="text"
+        className="input"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <button type="button" className="button mt-2" onClick={updateHeadline}>
         사자 이모지 추가
       </button>
     </article>
