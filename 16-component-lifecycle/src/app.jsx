@@ -14,7 +14,7 @@ export default function App() {
   const emailId = `${id}-email`
 
   return (
-    <section className="border-2 bg-indigo-700 text-white p-5">
+    <section className="border-2 bg-indigo-700 text-white p-5 h-screen">
       <div className="flex gap-2 items-center mt-2.5 mb-4">
         <h1 className="text-xl font-extrabold">{title}</h1>
         <button
@@ -102,6 +102,7 @@ function LearnComponentLifecycle() {
 
   return (
     <LearnSection
+      // @ts-ignore
       className="p-10"
       title="컴포넌트 라이프사이클(생명주기: 탄생(mount) -> 성장(update) -> 죽음(unmount))"
     >
@@ -161,9 +162,11 @@ function Child({ headline, updateHeadline, inputValue, setInputValue }) {
           // 직접 DOM에 접근/조작
           count = count + 10
           console.log(`updated count value = ${count}`)
+          // @ts-ignore
           e.target.textContent = String(count)
           // 초점 이동시키고자 한다면?
           // 리액트가 못하는 일 (부수효과)
+          // @ts-ignore
           document.querySelector('.input').select()
         }}
       >
