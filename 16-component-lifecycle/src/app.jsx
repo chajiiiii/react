@@ -9,6 +9,8 @@ export default function App() {
     '라이프사이클은 특정 단계의 변화를 말합니다.'
   )
 
+  const [isShown, setIsShown] = useState(false)
+
   return (
     <>
       <button
@@ -18,7 +20,16 @@ export default function App() {
       >
         설명 업데이트
       </button>
-      <LifeCycleDemo desc={description} />
+      <label className="m-5">
+        <input
+          type="checkbox"
+          checked={isShown}
+          onChange={() => setIsShown((is) => !is)}
+        />{' '}
+        라이프사이클 데모 {!isShown ? '표시' : '감춤'}
+      </label>
+
+      {isShown && <LifeCycleDemo desc={description} />}
     </>
   )
 }

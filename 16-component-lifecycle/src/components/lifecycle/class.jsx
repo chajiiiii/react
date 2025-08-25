@@ -27,6 +27,7 @@ export default class LifeCycleDemo extends Component {
   // 렌더 시점에 실행되는 메서드(함수)
   // - 컴포넌트 렌더링, 리렌더링 과정에서 여러 번 실행
   render() {
+    console.log('LifeCycleDemo 렌더링')
     // console.log('render', document.querySelector('.lifecycle-demo'))
 
     return (
@@ -52,7 +53,7 @@ export default class LifeCycleDemo extends Component {
 
   // 마운트 이후 실행되는 라이프사이클 메서드(콜백 함수)
   componentDidMount() {
-    console.log('마운팅 이후')
+    console.log('마운트 됨')
 
     // 리액트 렌더링 -> 브라우저 렌더링(페인팅) -> 이후에 실행
     // 사용자와 대면한 실제 UI (상호작용)
@@ -74,6 +75,7 @@ export default class LifeCycleDemo extends Component {
   // - render
   // - componentDidUpdate
   componentDidUpdate(prevProps, prevState) {
+    console.log('업데이트 됨')
     // 컴포넌트 업데이트 이전 시점의 상태 또는 속성에 접근 가능
     // 컴포넌트 업데이트 이후 시점의 상태 또는 속성에 접근 가능
     // 이전 속성 및 상태와 현재 속성 및 상태 비교
@@ -83,5 +85,11 @@ export default class LifeCycleDemo extends Component {
       prevState,
       currentState: this.state,
     })
+  }
+
+  // 언마운트 시점 ---------------------------------------------------
+
+  componentWillUnmount() {
+    console.log('언마운트 예정')
   }
 }
