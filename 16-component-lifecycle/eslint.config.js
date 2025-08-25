@@ -97,6 +97,7 @@ export default defineConfig([
         'error',
         {
           trailingComma: 'es5',
+          endOfLine: 'auto',
 
           // JSX 요소인 경우, 규칙 덮어쓰기
           overrides: [
