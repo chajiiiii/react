@@ -1,8 +1,30 @@
 import { useState } from 'react'
 import { LearnSection } from '@/components'
 import LifeCycleDemo from './components/lifecycle/class'
+import Practice from './components/lifecycle/practice'
 
 export default function App() {
+  console.log('App 렌더링')
+  const [isShown, setIsShown] = useState(false)
+
+  return (
+    <section className="border-2 bg-indigo-700 text-white p-5">
+      <h1>App 컴포넌트</h1>
+      <label>
+        <input
+          type="checkbox"
+          checked={isShown}
+          onChange={() => setIsShown((is) => !is)}
+        />{' '}
+        Practice {!isShown ? '마운트' : '언마운트'}
+      </label>
+
+      {isShown && <Practice />}
+    </section>
+  )
+}
+
+function LifeCycleDemoApp() {
   console.log('App 렌더링')
 
   const [description, setDescription] = useState(
