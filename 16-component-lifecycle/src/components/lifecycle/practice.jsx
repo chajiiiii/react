@@ -26,6 +26,17 @@ export default class PracticePart2 extends Component {
     return null
   }
 
+  shouldComponentUpdate(nextProps) {
+    console.log('업데이트될 속성', { nextProps })
+    console.log('현재 속성', { currentProps: this.props })
+
+    const tryRender = nextProps.email !== this.props.email
+    console.log('렌더링을 할까요?', tryRender)
+
+    return true // 렌더링 ✅
+    // return false // 렌더링 ❌
+  }
+
   render() {
     console.log('Practice 렌더링')
 
@@ -45,6 +56,8 @@ export default class PracticePart2 extends Component {
     )
   }
 }
+
+/* -------------------------------------------------------------------------- */
 
 class PracticePart1 extends Component {
   // constructor(props) {
@@ -146,6 +159,6 @@ class PracticePart1 extends Component {
 
   // 리액트 고급 사용자를 위한 클래스 컴포넌트의 라이프사이클 메서드
   // - static getDerivedStateFromProps(props, state) {}
-  // - shouldComponentUpdate() {}
+  // - shouldComponentUpdate(nextProps, nextState) {}
   // - getSnapshotBeforeUpdate() {}
 }
