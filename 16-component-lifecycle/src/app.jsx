@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { LearnSection } from '@/components'
 import LifeCycleDemo from './components/lifecycle/class'
 import Practice from './components/lifecycle/practice'
@@ -6,11 +6,32 @@ import Practice from './components/lifecycle/practice'
 export default function App() {
   console.log('App 렌더링')
   const [isShown, setIsShown] = useState(false)
+  const [email, setEmail] = useState('yamoo9@naver.com')
+  const id = useId()
+  const emailId = `${id}-email`
 
   return (
     <section className="border-2 bg-indigo-700 text-white p-5">
-      <h1>App 컴포넌트</h1>
-      <label>
+      <h1 className="text-xl font-extrabold">App 컴포넌트</h1>
+      <div role="group" className="flex flex-col gap-2 my-3">
+        <label htmlFor={emailId} className="sr-only">
+          이메일
+        </label>
+        <input
+          type="email"
+          name="email"
+          id={emailId}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="input bg-white text-indigo-500"
+          placeholder="user@company.io"
+        />
+        <output className="p-2 px-5 border rounded w-max">{email}</output>
+      </div>
+      <p>
+        Practice 컴포넌트의 상태는 "{isShown ? '마운트' : '언마운트'}"입니다.
+      </p>
+      <label className="block my-2">
         <input
           type="checkbox"
           checked={isShown}
