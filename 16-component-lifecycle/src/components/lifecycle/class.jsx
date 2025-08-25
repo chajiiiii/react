@@ -21,19 +21,28 @@ export default class LifeCycleDemo extends Component {
 
     // console.log({ state: this.state })
 
-    console.log('constructor', document.querySelector('.lifecycle-demo'))
+    // console.log('constructor', document.querySelector('.lifecycle-demo'))
   }
 
   // 렌더 시점에 실행되는 메서드(함수)
   // - 컴포넌트 렌더링, 리렌더링 과정에서 여러 번 실행
   render() {
-    console.log('render', document.querySelector('.lifecycle-demo'))
+    // console.log('render', document.querySelector('.lifecycle-demo'))
 
     return (
       <article className="lifecycle-demo m-5">
-        <h2>클래스 컴포너트의 라이프사이클 메서드</h2>
+        <h2>클래스 컴포너트의 라이프사이클 메서드 {this.state.count}</h2>
+        <p>{this.props.desc}</p>
         <label>
-          <input data-checkbox type="checkbox" name="checkbox" /> checkbox
+          <input
+            data-checkbox
+            type="checkbox"
+            name="checkbox"
+            onChange={() => {
+              this.setState({ count: this.state.count + 3 })
+            }}
+          />{' '}
+          checkbox
         </label>
       </article>
     )
@@ -43,9 +52,11 @@ export default class LifeCycleDemo extends Component {
 
   // 마운트 이후 실행되는 라이프사이클 메서드(콜백 함수)
   componentDidMount() {
+    console.log('마운팅 이후')
+
     // 리액트 렌더링 -> 브라우저 렌더링(페인팅) -> 이후에 실행
     // 사용자와 대면한 실제 UI (상호작용)
-    console.log('componentDidMount', document.querySelector('.lifecycle-demo'))
+    // console.log('componentDidMount', document.querySelector('.lifecycle-demo'))
 
     // DOM 접근/조작 (리액트 렌더링 프로세스와 무관, 부수 효과)
     // 리액트가 할 수 없는 일
@@ -54,5 +65,23 @@ export default class LifeCycleDemo extends Component {
     checkebox.focus()
   }
 
-  // 마운트 시점 ---------------------------------------------------
+  // 마운트 시점 ----------------------------------------------------
+  // - constructor
+  // - render
+  // - componentDidMount
+
+  // 업데이트 시점 ---------------------------------------------------
+  // - render
+  // - componentDidUpdate
+  componentDidUpdate(prevProps, prevState) {
+    // 컴포넌트 업데이트 이전 시점의 상태 또는 속성에 접근 가능
+    // 컴포넌트 업데이트 이후 시점의 상태 또는 속성에 접근 가능
+    // 이전 속성 및 상태와 현재 속성 및 상태 비교
+    console.log({
+      prevProps,
+      currentProps: this.props,
+      prevState,
+      currentState: this.state,
+    })
+  }
 }

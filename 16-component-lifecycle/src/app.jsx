@@ -5,7 +5,22 @@ import LifeCycleDemo from './components/lifecycle/class'
 export default function App() {
   console.log('App 렌더링')
 
-  return <LifeCycleDemo desc="라이프사이클은 특정단계의 변화를 말합니다." />
+  const [description, setDescription] = useState(
+    '라이프사이클은 특정 단계의 변화를 말합니다.'
+  )
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setDescription((d) => d + '⭐️')}
+        className="button m-2"
+      >
+        설명 업데이트
+      </button>
+      <LifeCycleDemo desc={description} />
+    </>
+  )
 }
 
 /* -------------------------------------------------------------------------- */
