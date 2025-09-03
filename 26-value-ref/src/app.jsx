@@ -12,6 +12,7 @@ export default function App() {
   return (
     <LearnSection
       title="클래스 vs. 함수 값 참조"
+      // @ts-ignore
       className="bg-slate-950 h-screen flex flex-col gap-4"
     >
       <TimerDemo />
