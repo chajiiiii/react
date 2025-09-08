@@ -17,6 +17,7 @@ export default function App() {
       <div className="transform-3d">
         <CustomModalDialog open={showDialog} onClose={closeDialog}>
           <div className="max-w-prose [&_p]:leading-normal space-y-3">
+            <input type="text" className="input" aria-label="메시지" />
             <p>
               다이얼로그는 사용자와 상호작용하는 모달 창으로, 정보를 표시하거나
               사용자 입력을 받는 데 사용됩니다.
