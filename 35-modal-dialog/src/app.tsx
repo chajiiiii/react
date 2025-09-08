@@ -1,16 +1,21 @@
 import CustomModalDialog from './components/dialog/custom-modal-dialog'
+import { useToggleState } from './hooks'
 
 export default function App() {
+  // 모달 다이얼로그 열기/닫기 상태 선언
+  const [showDialog, dialogHandles] = useToggleState(false)
+  const { on: openDialog, off: closeDialog } = dialogHandles
+
   return (
     <div className="p-10 flex flex-col gap-5">
       <div role="group" className="flex gap-1">
-        <button type="button" className="button">
+        <button type="button" className="button" onClick={openDialog}>
           모달 다이얼로그 열기
         </button>
       </div>
 
       <div className="transform-3d">
-        <CustomModalDialog open={false}>
+        <CustomModalDialog open={showDialog} onClose={closeDialog}>
           <div className="max-w-prose [&_p]:leading-normal space-y-3">
             <p>
               다이얼로그는 사용자와 상호작용하는 모달 창으로, 정보를 표시하거나
