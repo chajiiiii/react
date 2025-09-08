@@ -26,6 +26,7 @@ export default function CustomModalDialog({
   describe,
   children,
 }: Props) {
+  const opennerRef = useRef<HTMLElement>(null)
   const dialogDimRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
 
@@ -38,17 +39,66 @@ export default function CustomModalDialog({
     if (!open || !dialog) return
 
     // 다이얼로그가 열리면
+    // 모달 다이얼로그를 연 어떤 요소를 RefObject를 사용해 기억(memo)
+    opennerRef.current = document.activeElement as HTMLElement
+
     // 다이얼로그 안에서 탭키로 탐색 가능한(tabbable) 요소들을 수집
     const tabbables = [...dialog.querySelectorAll(tabbableSelector)]
+    const isExistTabbables = tabbables.length > 0
 
     // 첫 번째 탭 키로 이동 가능한 요소에 초점 이동 설정
     const focusingFirstTabbable = () => {
-      const firstTabbable = tabbables.at(0) as HTMLElement
-      firstTabbable?.focus?.()
+      if (isExistTabbables) {
+        const firstTabbable = tabbables.at(0) as HTMLElement
+        firstTabbable.focus()
+      }
     }
 
     focusingFirstTabbable()
-  }, [open])
+
+    // 포커스 트랩(focus-trap)
+    // - 탭 이동이 가능한(tabbable) 요소들 중 마지막 요소에서
+    //   Tab 키를 누르면 첫번째 요소로 초점 이동 (브라우저 기본 작동 방지)
+    // - 탭 이동이 가능한(tabbable) 요소들 중 첫번째 요소에서
+    //   Shift + Tab 키를 누르면 마지막 요소로 초점 이동 (브라우저 기본 작동 방지)
+    // - 탈출(Escape) 키를 누르면 모달 다이어로그가 닫혀야 하고,
+    //   모달 다이얼로그를 트리거(trigger)한 오프너(openner) 요소에 초점 되돌려 줘야 함
+    const handleFocusTrap = (e: globalThis.KeyboardEvent) => {
+      if (!isExistTabbables) return
+
+      const { key, shiftKey } = e
+      const { activeElement } = document
+      const firstTabbable = tabbables.at(0) as HTMLElement
+      const lastTabbable = tabbables.at(-1) as HTMLElement
+
+      if (key === 'Escape') {
+        onClose?.()
+        opennerRef.current?.focus()
+        return
+      }
+
+      if (key === 'Tab') {
+        if (shiftKey && activeElement === firstTabbable) {
+          // 탭 이동이 가능한(tabbable) 요소들 중 첫번째 요소에서
+          // Shift + Tab 키를 누르면 마지막 요소로 초점 이동 (브라우저 기본 작동 방지)
+          e.preventDefault()
+          lastTabbable.focus()
+        } else if (!shiftKey && activeElement === lastTabbable) {
+          // 탭 이동이 가능한(tabbable) 요소들 중 마지막 요소에서
+          // Tab 키를 누르면 첫번째 요소로 초점 이동 (브라우저 기본 작동 방지)
+          console.log('마지막 탭 이동 가능한 요소에서 Tab 키 누름')
+          e.preventDefault()
+          firstTabbable.focus()
+        }
+      }
+    }
+
+    dialog.addEventListener('keydown', handleFocusTrap)
+
+    return () => {
+      dialog.removeEventListener('keydown', handleFocusTrap)
+    }
+  }, [open, onClose])
 
   const handleClose = (e: MouseEvent<HTMLDivElement>) => {
     if (dialogDimRef.current === e.target) {
