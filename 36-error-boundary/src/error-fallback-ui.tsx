@@ -1,8 +1,8 @@
 import { type ErrorInfo } from 'react'
 
 export interface FallbackRenderProps {
-  error: Error | null
-  errorInfo: ErrorInfo | null
+  error?: Error
+  errorInfo?: ErrorInfo
 }
 
 export default function ErrorFallbackUI({
