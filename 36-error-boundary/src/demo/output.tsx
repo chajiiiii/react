@@ -15,7 +15,7 @@ export default function Output({ count, targetCount }: Props) {
   // 특정한 상황에서 렌더링에 오류 유발
   // try ~ catch를 사용해서 오류를 잡을 수 있지 않을까?
   try {
-    tryFn()
+    // tryFn()
   } catch (error) {
     setError(error as Error)
   }
