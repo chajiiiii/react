@@ -1,4 +1,4 @@
-import CustomModalDialog from './components/dialog/custom-modal-dialog'
+import NativeModalDialog from './components/dialog/native-modal-dialog'
 import { useToggleState } from './hooks'
 
 export default function App() {
@@ -10,12 +10,12 @@ export default function App() {
     <div className="p-10 flex flex-col gap-5">
       <div role="group" className="flex gap-1">
         <button type="button" className="button" onClick={openDialog}>
-          모달 다이얼로그 열기
+          모달 다이얼로그 {showDialog ? '닫기' : '열기'}
         </button>
       </div>
 
       <div className="transform-3d">
-        <CustomModalDialog open={showDialog} onClose={closeDialog}>
+        <NativeModalDialog open={showDialog} onClose={closeDialog}>
           <div className="max-w-prose [&_p]:leading-normal space-y-3">
             <input type="text" className="input" aria-label="메시지" />
             <p>
@@ -35,7 +35,7 @@ export default function App() {
               참고
             </a>
           </div>
-        </CustomModalDialog>
+        </NativeModalDialog>
       </div>
 
       <div className="max-w-prose [&_p]:leading-normal space-y-3">
@@ -56,6 +56,12 @@ export default function App() {
           참고
         </a>
       </div>
+
+      {Array(4)
+        .fill(null)
+        .map((_, i) => (
+          <div key={i} className="h-[300px] max-w-lg bg-amber-300" />
+        ))}
     </div>
   )
 }
