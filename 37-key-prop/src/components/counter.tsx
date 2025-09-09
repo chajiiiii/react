@@ -5,13 +5,19 @@ export default function Counter() {
 
   return (
     <div
-      role="group"
+      role="none"
+      onClick={() => console.log('[Bubble] 부모 div 클릭')}
+      onClickCapture={() => console.log('[Capture] 부모 div 클릭')}
       className="py-1 px-2 bg-neutral-950 text-neutral-50 rounded-full flex gap-2 items-center"
     >
       <button
         type="button"
         className={buttonClass}
-        onClick={() => setCount(count - 1)}
+        onClickCapture={() => console.log('[Capture] 카운트 감소 버튼 클릭')}
+        onClick={() => {
+          console.log('[Bubble] 카운트 감소 버튼 클릭')
+          setCount(count - 1)
+        }}
         aria-label="카운트 감소"
       >
         -
@@ -20,7 +26,11 @@ export default function Counter() {
       <button
         type="button"
         className={buttonClass}
-        onClick={() => setCount(count + 1)}
+        onClickCapture={() => console.log('[Capture] 카운트 증가 버튼 클릭')}
+        onClick={() => {
+          console.log('[Bubble] 카운트 증가 버튼 클릭')
+          setCount(count + 1)
+        }}
         aria-label="카운트 증가"
       >
         +

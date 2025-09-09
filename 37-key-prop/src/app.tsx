@@ -1,23 +1,26 @@
-import { useState } from 'react'
-import { Counter } from '@/components'
-import RandomCountUp from './demo'
+import { useCallback } from 'react'
+import { Child } from '@/components'
 
 export default function App() {
-  const [isA, setIsA] = useState(true)
+  const makeHandleClick = useCallback(
+    (message: string) => () => console.log(message),
+    []
+  )
 
   return (
-    <>
-      <div className="m-10 flex flex-col gap-2 items-center">
-        <button
-          type="button"
-          className="cursor-pointer py-1.5 px-3.5 bg-stone-950 text-white rounded font-black"
-          onClick={() => setIsA((a) => !a)}
-        >
-          {isA ? 'A' : 'Z'}
-        </button>
-        {isA ? <Counter key="A" /> : <Counter key="Z" />}
-      </div>
-      <RandomCountUp />
-    </>
+    <div
+      role="presentation"
+      className="p-5 bg-indigo-600 text-white"
+      onClickCapture={makeHandleClick('부모 div - Capture 단계')}
+      onClick={makeHandleClick('부모 div - Bubble 단계')}
+    >
+      <h2 className="m-0">부모</h2>
+      <Child
+        onClickCapture={makeHandleClick('자식 div - Capture 단계')}
+        onClick={makeHandleClick('자식 div - Bubble 단계')}
+      >
+        자식
+      </Child>
+    </div>
   )
 }
