@@ -1,3 +1,4 @@
+import CustomModalDialog from './components/dialog/custom-modal-dialog'
 import NativeModalDialog from './components/dialog/native-modal-dialog'
 import { useToggleState } from './hooks'
 
@@ -15,7 +16,7 @@ export default function App() {
       </div>
 
       <div className="transform-3d">
-        <NativeModalDialog open={showDialog} onClose={closeDialog}>
+        <CustomModalDialog open={showDialog} onClose={closeDialog}>
           <div className="max-w-prose [&_p]:leading-normal space-y-3">
             <input type="text" className="input" aria-label="메시지" />
             <p>
@@ -35,7 +36,7 @@ export default function App() {
               참고
             </a>
           </div>
-        </NativeModalDialog>
+        </CustomModalDialog>
       </div>
 
       <div className="max-w-prose [&_p]:leading-normal space-y-3">

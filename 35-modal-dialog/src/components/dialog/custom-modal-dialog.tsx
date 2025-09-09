@@ -1,15 +1,13 @@
-// Modal Dialog 컴포넌트
-// 1. Custom Modal Dialog: <div role="dialog" aria-modal="true">
-// 2. Native Modal Dialog: <dialog aria-modal="true">
 import {
-  type MouseEvent,
   type PropsWithChildren,
+  useCallback,
   useEffect,
   useId,
   useRef,
 } from 'react'
 import { createPortal } from 'react-dom'
 import { XCircleIcon } from 'lucide-react'
+import { useOpenAnimating } from '@/hooks'
 import { tabbableSelector, tw } from '@/utils'
 
 type Props = PropsWithChildren<{
@@ -33,6 +31,14 @@ export default function CustomModalDialog({
   const dialogId = useId()
   const titleId = `${dialogId}-title`
   const describeId = `${dialogId}-describe`
+
+  const animationDuration = 250
+  const { openFinished } = useOpenAnimating(open, animationDuration)
+
+  const close = useCallback(() => {
+    opennerRef.current?.focus()
+    onClose?.()
+  }, [onClose])
 
   useEffect(() => {
     const dialog = dialogRef.current
@@ -71,11 +77,7 @@ export default function CustomModalDialog({
       const firstTabbable = tabbables.at(0) as HTMLElement
       const lastTabbable = tabbables.at(-1) as HTMLElement
 
-      if (key === 'Escape') {
-        onClose?.()
-        opennerRef.current?.focus()
-        return
-      }
+      if (key === 'Escape') return close()
 
       if (key === 'Tab') {
         if (shiftKey && activeElement === firstTabbable) {
@@ -95,16 +97,19 @@ export default function CustomModalDialog({
 
     dialog.addEventListener('keydown', handleFocusTrap)
 
+    // 다이얼로그가 열린 상태
+    // 문서의 스크롤 바를 감춤
+    document.body.style.overflowY = 'hidden'
+
     return () => {
       dialog.removeEventListener('keydown', handleFocusTrap)
+      // 다이얼로그가 닫힌 상태
+      // 문서의 스크롤 바를 표시
+      setTimeout(() => {
+        document.body.style.overflowY = 'visible'
+      }, animationDuration)
     }
-  }, [open, onClose])
-
-  const handleClose = (e: MouseEvent<HTMLDivElement>) => {
-    if (dialogDimRef.current === e.target) {
-      onClose?.()
-    }
-  }
+  }, [open, onClose, close])
 
   const portalContainer = document.getElementById('modal-dialog-portal')
   if (!portalContainer) return null
@@ -113,12 +118,13 @@ export default function CustomModalDialog({
     <div
       ref={dialogDimRef}
       role="presentation"
-      onClick={handleClose}
+      onClick={(e) => dialogDimRef.current === e.target && close()}
       className={tw(
         'fixed inset-0 z-10000',
-        open ? 'flex' : 'hidden',
-        'justify-center items-center',
-        'bg-black/20 backdrop-blur-[3px]'
+        'flex justify-center items-center',
+        'bg-black/20 backdrop-blur-[3px]',
+        'transition-all duration-250',
+        openFinished ? 'opacity-100' : 'opacity-0 pointer-events-none'
       )}
     >
       <div
@@ -130,7 +136,11 @@ export default function CustomModalDialog({
         className={tw(
           'relative',
           'w-full max-w-lg rounded-lg shadow-xl p-10',
-          'bg-white'
+          'bg-white',
+          'transition-all duration-250',
+          openFinished
+            ? 'opacity-100 scale-100'
+            : 'opacity-0 scale-95 translate-y-20'
         )}
       >
         <h2 id={titleId}>{title && '다이얼로그 제목'}</h2>
@@ -140,7 +150,7 @@ export default function CustomModalDialog({
           type="button"
           aria-label="다이얼로그 닫기"
           title="다이얼로그 닫기"
-          onClick={onClose}
+          onClick={close}
           className={tw(
             'cursor-pointer',
             'absolute -top-2.5 -right-2.5 rounded-full',

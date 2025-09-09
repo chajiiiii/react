@@ -127,14 +127,9 @@ export default function NativeModalDialog({
       aria-labelledby={titleId}
       aria-describedby={describe ? describeId : undefined}
       className={tw(
-        'relative overflow-visible',
-        'fixed inset-0 z-10000',
-        open ? 'flex' : 'hidden',
-        'justify-center items-center',
-        'm-auto',
-        'backdrop:bg-black/20',
-        'w-full max-w-lg rounded-lg shadow-xl p-10',
-        'bg-white'
+        'relative',
+        'overflow-visible',
+        'border-0 m-auto p-5 rounded-md shadow-xl bg-white'
       )}
     >
       <h2 id={titleId}>{title && '다이얼로그 제목'}</h2>
