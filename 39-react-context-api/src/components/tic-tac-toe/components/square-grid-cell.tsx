@@ -1,24 +1,22 @@
-import { type MouseEvent } from 'react'
+import { type MouseEvent, useContext } from 'react'
 import { tw } from '@/utils'
-import {
-  GRID,
-  type PlayGameFunctionType,
-  type PlayerType,
-  getPlayerName,
-} from '../constants'
+import { GRID, type PlayerType, getPlayerName } from '../constants'
+import { TicTacToeContext } from '../game'
 import S from './square-grid-cell.module.css'
+
+interface Props {
+  isWinnerPattern?: boolean
+  children: PlayerType | null
+  index: number
+}
 
 export default function SquareGridCell({
   isWinnerPattern,
   children,
   index,
-  onPlay,
-}: {
-  isWinnerPattern?: boolean
-  children: PlayerType | null
-  index: number
-  onPlay: PlayGameFunctionType
-}) {
+}: Props) {
+  const gameState = useContext(TicTacToeContext)
+
   const isDisabled = !!children
 
   const playerName = getPlayerName(children)
@@ -29,7 +27,9 @@ export default function SquareGridCell({
 
   const colIndex = (index % GRID.COLS) + 1
 
-  const handlePlay = (e: MouseEvent<HTMLButtonElement>) => onPlay(index, e)
+  const handlePlay = (e: MouseEvent<HTMLButtonElement>) => {
+    gameState?.playGame(index, e)
+  }
 
   return (
     <button

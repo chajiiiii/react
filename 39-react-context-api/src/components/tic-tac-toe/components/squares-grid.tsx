@@ -1,22 +1,12 @@
-import { type KeyboardEvent } from 'react'
-import {
-  GRID,
-  type PlayGameFunctionType,
-  type SquaresType,
-  type WinnerType,
-} from '../constants'
+import { type KeyboardEvent, useContext } from 'react'
+import { GRID } from '../constants'
+import { TicTacToeContext } from '../game'
 import SquareGridCell from './square-grid-cell'
 import S from './squares-grid.module.css'
 
-export default function SquaresGrid({
-  winner,
-  squares,
-  onPlay,
-}: {
-  winner: WinnerType | null
-  squares: SquaresType
-  onPlay: PlayGameFunctionType
-}) {
+export default function SquaresGrid() {
+  const gameState = useContext(TicTacToeContext)
+
   const handleKeyControls = (e: KeyboardEvent<HTMLDivElement>) => {
     const { key } = e
 
@@ -64,14 +54,13 @@ export default function SquaresGrid({
       aria-rowcount={GRID.ROWS}
       aria-colcount={GRID.COLS}
     >
-      {squares.map((square, index) => {
-        const isWinnerPattern = winner?.pattern?.includes(index)
+      {gameState?.squares.map((square, index) => {
+        const isWinnerPattern = gameState.winner?.pattern?.includes(index)
         return (
           <SquareGridCell
-            isWinnerPattern={isWinnerPattern}
             key={index}
+            isWinnerPattern={isWinnerPattern}
             index={index}
-            onPlay={onPlay}
           >
             {square}
           </SquareGridCell>
