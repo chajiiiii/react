@@ -28,7 +28,11 @@ export default function Counter({
         <Minus />
       </button>
 
-      <output className="text-9xl text-white select-none">
+      <output
+        role="presentation"
+        onClick={counterStore.onReset}
+        className="text-9xl text-white select-none"
+      >
         {counterStore.count}
       </output>
 
