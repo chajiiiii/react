@@ -140,6 +140,7 @@ export default defineConfig([
               },
             },
           ],
+          endOfLine: 'auto',
         },
       ],
 
