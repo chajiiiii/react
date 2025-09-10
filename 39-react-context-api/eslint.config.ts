@@ -74,6 +74,12 @@ export default defineConfig([
   // 사용자 정의 규칙
   {
     rules: {
+      'react-refresh/only-export-components': [
+        'error',
+        {
+          allowExportNames: ['GlobalStateContext'],
+        },
+      ],
       // 정의되지 않은 변수 사용 금지
       'no-undef': 'error',
 
