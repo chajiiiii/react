@@ -1,27 +1,44 @@
-import { RefObject, useRef, useState } from 'react'
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { tw } from '@/utils'
 import { useTodoList } from '../../context'
 import type { Todo } from '../../types'
 import S from './style.module.css'
 
 export default function TodoItem({ item }: { item: Todo }) {
-  const { remove, toggle } = useTodoList()
+  const { remove, toggle, edit } = useTodoList()
   const handleRemoveTodo = () => remove(item.id)
   const handleToggleTodo = () => toggle(item.id)
 
   const editInputRef = useRef<HTMLInputElement>(null)
   const [editMode, setEditMode] = useState<boolean>(false)
+
+  const handleSave = useCallback(() => {
+    const editInput = editInputRef.current
+    if (editInput) edit(item.id, editInput.value)
+    setEditMode(false)
+  }, [edit, item.id])
+
+  useEffect(() => {
+    const editInput = editInputRef.current
+    const handleKeyControls = ({ key }: globalThis.KeyboardEvent) => {
+      if (key === 'Enter') handleSave()
+      if (key === 'Escape') setEditMode(false)
+    }
+
+    if (editMode) {
+      if (editInput) {
+        editInput?.select()
+        editInput?.addEventListener('keydown', handleKeyControls)
+      }
+    } else {
+      editInput?.removeEventListener('keydown', handleKeyControls)
+    }
+  }, [editMode, handleSave])
+
   const handleEditModeOn = () => setEditMode(true)
-  const handleEditModeOff = () => setEditMode(false)
 
   if (editMode) {
-    return (
-      <EditMode
-        ref={editInputRef}
-        item={item}
-        onEditModeOff={handleEditModeOff}
-      />
-    )
+    return <EditMode ref={editInputRef} item={item} onSave={handleSave} />
   }
 
   return (
@@ -66,21 +83,12 @@ export default function TodoItem({ item }: { item: Todo }) {
 function EditMode({
   ref: inputRef,
   item,
-  onEditModeOff,
+  onSave,
 }: {
   ref: RefObject<HTMLInputElement | null>
   item: Todo
-  onEditModeOff: () => void
+  onSave: () => void
 }) {
-  const { edit } = useTodoList()
-
-  const handleSave = () => {
-    const input = inputRef.current
-    if (!input) return
-    edit(item.id, input.value)
-    onEditModeOff()
-  }
-
   return (
     <li className={S.listItem} data-list-item-edit-mode>
       <div className={tw(S.formControl, 'form-control row')}>
@@ -92,9 +100,9 @@ function EditMode({
         />
       </div>
       <button
-        onClick={handleSave}
         className="button"
         type="button"
+        onClick={onSave}
         data-button-save
       >
         저장
