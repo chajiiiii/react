@@ -9,4 +9,5 @@ export interface Todo {
 export interface TodoListContextValue {
   state: { todos: Todo[] }
   add: (newDoIt: Todo['doit']) => void
+  remove: (removeTodoId: Todo['id']) => void
 }

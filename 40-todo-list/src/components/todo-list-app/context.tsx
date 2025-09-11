@@ -1,6 +1,6 @@
 import { type PropsWithChildren, createContext, useContext } from 'react'
 import { useImmerReducer } from 'use-immer'
-import { addAction, todoListReducer } from './reducer'
+import { addAction, removeAction, todoListReducer } from './reducer'
 import { Todo, type TodoListContextValue } from './types'
 
 // 컨텍스트
@@ -34,6 +34,7 @@ export default function TodoListProvider({ children }: PropsWithChildren) {
   const todoListStore = {
     state,
     add: (newDoIt: Todo['doit']) => dispatch(addAction(newDoIt)),
+    remove: (removeTodoId: Todo['id']) => dispatch(removeAction(removeTodoId)),
   }
 
   return (

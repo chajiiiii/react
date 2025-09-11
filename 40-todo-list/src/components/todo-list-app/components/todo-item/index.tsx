@@ -1,8 +1,12 @@
 import { tw } from '@/utils'
+import { useTodoList } from '../../context'
 import type { Todo } from '../../types'
 import S from './style.module.css'
 
 export default function TodoItem({ item }: { item: Todo }) {
+  const { remove } = useTodoList()
+  const handleRemoveTodo = () => remove(item.id)
+
   return (
     <li className={S.listItem}>
       <div className={tw(S.formControl, 'form-control row h-11')}>
@@ -23,7 +27,12 @@ export default function TodoItem({ item }: { item: Todo }) {
       <button className="button" type="button" data-button-edit>
         수정
       </button>
-      <button className="button" type="button" data-button-delete>
+      <button
+        className="button"
+        type="button"
+        onClick={handleRemoveTodo}
+        data-button-delete
+      >
         삭제
       </button>
     </li>

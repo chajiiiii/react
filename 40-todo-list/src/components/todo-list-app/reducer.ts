@@ -8,13 +8,16 @@ interface State {
   todos: Todo[]
 }
 
-type Action = { type: typeof ACTION.ADD; payload: { newDoIt: Todo['doit'] } }
+type Action =
+  | { type: typeof ACTION.ADD; payload: { newDoIt: Todo['doit'] } }
+  | { type: typeof ACTION.REMOVE; payload: { removeTodoId: Todo['id'] } }
 
 // --------------------------------------------------------------------------
 // 액션 타입
 
 const ACTION = {
   ADD: '@todolist/add',
+  REMOVE: '@todolist/remove',
 } as const
 
 // --------------------------------------------------------------------------
@@ -23,6 +26,11 @@ const ACTION = {
 export const addAction = (newDoIt: Todo['doit']): Action => ({
   type: ACTION.ADD,
   payload: { newDoIt },
+})
+
+export const removeAction = (removeTodoId: Todo['id']): Action => ({
+  type: ACTION.REMOVE,
+  payload: { removeTodoId },
 })
 
 // --------------------------------------------------------------------------
@@ -36,7 +44,17 @@ export function todoListReducer(draft: Draft<State>, action: Action) {
         doit: newDoIt,
         done: false,
       }
-      return void draft.todos.unshift(newTodoItem)
+      draft.todos.unshift(newTodoItem)
+      break
+    }
+
+    case ACTION.REMOVE: {
+      const { removeTodoId } = action.payload
+      const removeIndex = draft.todos.findIndex(
+        (todo) => todo.id === removeTodoId
+      )
+      draft.todos.splice(removeIndex, 1)
+      break
     }
 
     default: {
