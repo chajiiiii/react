@@ -4,8 +4,9 @@ import type { Todo } from '../../types'
 import S from './style.module.css'
 
 export default function TodoItem({ item }: { item: Todo }) {
-  const { remove } = useTodoList()
+  const { remove, toggle } = useTodoList()
   const handleRemoveTodo = () => remove(item.id)
+  const handleToggleTodo = () => toggle(item.id)
 
   return (
     <li className={S.listItem}>
@@ -13,7 +14,9 @@ export default function TodoItem({ item }: { item: Todo }) {
         <input
           id={item.id}
           type="checkbox"
-          defaultChecked={item.done}
+          // defaultChecked={item.done}
+          checked={item.done}
+          onChange={handleToggleTodo}
           data-list-item-checkbox
         />
         <label

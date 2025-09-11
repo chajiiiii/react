@@ -12,6 +12,7 @@ import {
   removeTodoListStorageData,
   setTodoListStorageData,
   todoListReducer,
+  toggleAction,
 } from './reducer'
 import { Todo, type TodoListContextValue } from './types'
 
@@ -60,6 +61,7 @@ export default function TodoListProvider({
     state,
     add: (newDoIt: Todo['doit']) => dispatch(addAction(newDoIt)),
     remove: (removeTodoId: Todo['id']) => dispatch(removeAction(removeTodoId)),
+    toggle: (toggleTodoId: Todo['id']) => dispatch(toggleAction(toggleTodoId)),
   }
 
   return (
