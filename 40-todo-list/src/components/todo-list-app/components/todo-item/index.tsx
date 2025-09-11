@@ -1,17 +1,23 @@
 import { tw } from '@/utils'
+import type { Todo } from '../../types'
 import S from './style.module.css'
 
-export default function TodoItem() {
+export default function TodoItem({ item }: { item: Todo }) {
   return (
     <li className={S.listItem}>
       <div className={tw(S.formControl, 'form-control row h-11')}>
-        <input id="todo-item-cisdk" type="checkbox" data-list-item-checkbox />
+        <input
+          id={item.id}
+          type="checkbox"
+          defaultChecked={item.done}
+          data-list-item-checkbox
+        />
         <label
-          htmlFor="todo-item-cisdk"
-          className={S.listItemLabel}
+          htmlFor={item.id}
+          className={tw(S.listItemLable, 'select-none')}
           data-list-item-label
         >
-          할 일 1
+          {item.doit}
         </label>
       </div>
       <button className="button" type="button" data-button-edit>
