@@ -1,7 +1,7 @@
 import { type PropsWithChildren, createContext, useContext } from 'react'
 import { useImmerReducer } from 'use-immer'
-import todoListReducer from './reducer'
-import { type TodoListContextValue } from './types'
+import { addAction, todoListReducer } from './reducer'
+import { Todo, type TodoListContextValue } from './types'
 
 // 컨텍스트
 const TodoListContext = createContext<null | TodoListContextValue>(null)
@@ -26,12 +26,18 @@ const initialState = {
 export default function TodoListProvider({ children }: PropsWithChildren) {
   // 리듀서(Reducer)를 사용해
   // 컨텍스트 상태 및 상태 업데이트 로직
-  const [state, _dispatch] = useImmerReducer(todoListReducer, initialState)
+  const [state, dispatch] = useImmerReducer(todoListReducer, initialState)
 
   // 컨텍스트를 사용해 컨텍스트 내부의 모든 컴포넌트에
   // 컨텍스트 값으로 공급
+
+  const todoListStore = {
+    state,
+    add: (newDoIt: Todo['doit']) => dispatch(addAction(newDoIt)),
+  }
+
   return (
-    <TodoListContext.Provider value={state}>
+    <TodoListContext.Provider value={todoListStore}>
       {children}
     </TodoListContext.Provider>
   )
