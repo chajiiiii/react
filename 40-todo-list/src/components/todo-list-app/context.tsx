@@ -1,12 +1,24 @@
-import { type PropsWithChildren, createContext, useContext } from 'react'
+import {
+  type PropsWithChildren,
+  createContext,
+  useContext,
+  useEffect,
+} from 'react'
 import { useImmerReducer } from 'use-immer'
-import { addAction, removeAction, todoListReducer } from './reducer'
+import {
+  addAction,
+  init,
+  removeAction,
+  removeTodoListStorageData,
+  setTodoListStorageData,
+  todoListReducer,
+} from './reducer'
 import { Todo, type TodoListContextValue } from './types'
 
 // 컨텍스트
 const TodoListContext = createContext<null | TodoListContextValue>(null)
 
-// 초깃값
+// 초깃값(초기화 함수에서 쓸 수 있음)
 const initialState = {
   todos: [
     {
@@ -23,10 +35,23 @@ const initialState = {
 }
 
 // 프로바이더 래퍼 컴포넌트
-export default function TodoListProvider({ children }: PropsWithChildren) {
+export default function TodoListProvider({
+  children,
+  persist = false,
+}: PropsWithChildren<{ persist?: boolean }>) {
   // 리듀서(Reducer)를 사용해
   // 컨텍스트 상태 및 상태 업데이트 로직
-  const [state, dispatch] = useImmerReducer(todoListReducer, initialState)
+  const [state, dispatch] = useImmerReducer(todoListReducer, initialState, init)
+
+  // 부수 효과(Side effects)
+  // 컨텍스트 상태가 변경될 때 마다, 스토리지에 데이터 저장
+  useEffect(() => {
+    if (persist) {
+      setTodoListStorageData(state)
+    } else {
+      removeTodoListStorageData()
+    }
+  }, [state, persist])
 
   // 컨텍스트를 사용해 컨텍스트 내부의 모든 컴포넌트에
   // 컨텍스트 값으로 공급

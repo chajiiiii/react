@@ -5,7 +5,7 @@ import './style.css'
 
 export default function TodoListApp() {
   return (
-    <TodoListProvider>
+    <TodoListProvider persist>
       <NewTodoForm />
       <TodoList />
     </TodoListProvider>
