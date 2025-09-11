@@ -7,6 +7,7 @@ import {
 import { useImmerReducer } from 'use-immer'
 import {
   addAction,
+  editAction,
   init,
   removeAction,
   removeTodoListStorageData,
@@ -62,6 +63,8 @@ export default function TodoListProvider({
     add: (newDoIt: Todo['doit']) => dispatch(addAction(newDoIt)),
     remove: (removeTodoId: Todo['id']) => dispatch(removeAction(removeTodoId)),
     toggle: (toggleTodoId: Todo['id']) => dispatch(toggleAction(toggleTodoId)),
+    edit: (editTodoId: Todo['id'], newDoIt: Todo['doit']) =>
+      dispatch(editAction(editTodoId, newDoIt)),
   }
 
   return (

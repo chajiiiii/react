@@ -12,6 +12,10 @@ type Action =
   | { type: typeof ACTION.ADD; payload: { newDoIt: Todo['doit'] } }
   | { type: typeof ACTION.REMOVE; payload: { removeTodoId: Todo['id'] } }
   | { type: typeof ACTION.TOGGLE; payload: { toggleTodoId: Todo['id'] } }
+  | {
+      type: typeof ACTION.EDIT
+      payload: { editTodoId: Todo['id']; newDoIt: Todo['doit'] }
+    }
 
 // --------------------------------------------------------------------------
 // 액션 타입
@@ -19,7 +23,8 @@ type Action =
 const ACTION = {
   ADD: '@todolist/add-todo',
   REMOVE: '@todolist/remove-todo',
-  TOGGLE: '@todolist/toggle-done',
+  TOGGLE: '@todolist/toggle-todo-done',
+  EDIT: '@todolist/edit-todo',
 } as const
 
 // --------------------------------------------------------------------------
@@ -38,6 +43,14 @@ export const removeAction = (removeTodoId: Todo['id']): Action => ({
 export const toggleAction = (toggleTodoId: Todo['id']): Action => ({
   type: ACTION.TOGGLE,
   payload: { toggleTodoId },
+})
+
+export const editAction = (
+  editTodoId: Todo['id'],
+  newDoIt: Todo['doit']
+): Action => ({
+  type: ACTION.EDIT,
+  payload: { editTodoId, newDoIt },
 })
 
 // --------------------------------------------------------------------------
@@ -84,6 +97,13 @@ export function todoListReducer(draft: Draft<State>, action: Action) {
 
       todo.done = !todo.done
 
+      break
+    }
+
+    case ACTION.EDIT: {
+      const { editTodoId, newDoIt } = action.payload
+      const index = draft.todos.findIndex((todo) => todo.id === editTodoId)
+      draft.todos[index].doit = newDoIt
       break
     }
 
