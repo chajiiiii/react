@@ -7,11 +7,17 @@ export interface Todo {
 
 // 컨텍스트 값 타입 선언
 export interface TodoListContextValue {
-  state: { todos: Todo[]; search: string; hiddenDoneTodos: boolean }
+  todos: Todo[]
+  search: string
+  hiddenDoneTodos: boolean
+}
+
+// 상태 업데이트 함수 관리 컨텍스트 값 인터페이스 선언
+export interface TodoListDispatchContextValue {
   add: (newDoIt: Todo['doit']) => void
-  remove: (removeTodoId: Todo['id']) => void
+  remove: (removeTodoId: string) => void
   toggle: (toggleTodoId: Todo['id']) => void
-  edit: (editTodoId: Todo['id'], newDoIt: string) => void
+  edit: (editTodoId: string, newDoIt: string) => void
   search: (searchTerm: string) => void
   hidden: (hiddenDoneTodos: boolean) => void
 }

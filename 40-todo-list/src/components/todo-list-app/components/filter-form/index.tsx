@@ -1,9 +1,10 @@
 import { ChangeEvent } from 'react'
-import { useTodoList } from '../../context'
+import { useTodoList, useTodoListDispatch } from '../../context'
 import S from './style.module.css'
 
 export default function FilterForm() {
-  const { state, search, hidden } = useTodoList()
+  const { hiddenDoneTodos } = useTodoList()
+  const { search, hidden } = useTodoListDispatch()
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     search(e.target.value.trim())
@@ -26,7 +27,7 @@ export default function FilterForm() {
         <input
           type="checkbox"
           id="hide-completed"
-          checked={state.hiddenDoneTodos}
+          checked={hiddenDoneTodos}
           onChange={handleHiddenDoneTodos}
         />
         <label htmlFor="hide-completed">완료된 할 일 감추기</label>

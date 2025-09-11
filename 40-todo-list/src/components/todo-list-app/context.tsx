@@ -1,8 +1,10 @@
+/* eslint-disable react-refresh/only-export-components */
 import {
   type PropsWithChildren,
   createContext,
   useContext,
   useEffect,
+  useMemo,
 } from 'react'
 import { useImmerReducer } from 'use-immer'
 import {
@@ -17,13 +19,23 @@ import {
   todoListReducer,
   toggleAction,
 } from './reducer'
-import { Todo, type TodoListContextValue } from './types'
+import {
+  Todo,
+  type TodoListContextValue,
+  type TodoListDispatchContextValue,
+} from './types'
 
-// 컨텍스트
+// 상태 관리 컨텍스트
 const TodoListContext = createContext<null | TodoListContextValue>(null)
+TodoListContext.displayName = 'TodoListContext'
+
+// 상태 업데이트 함수 관리 컨텍스트
+const TodoListDispatchContext =
+  createContext<null | TodoListDispatchContextValue>(null)
+TodoListDispatchContext.displayName = 'TodoListDispatchContext'
 
 // 초깃값(초기화 함수에서 쓸 수 있음)
-const initialState = {
+const initialState: TodoListContextValue = {
   todos: [
     {
       id: 'todo-1',
@@ -45,9 +57,33 @@ export default function TodoListProvider({
   children,
   persist = false,
 }: PropsWithChildren<{ persist?: boolean }>) {
-  // 리듀서(Reducer)를 사용해
-  // 컨텍스트 상태 및 상태 업데이트 로직
+  // 리듀서(Reducer)를 사용해 컨텍스트 상태 및 상태 업데이트 로직
   const [state, dispatch] = useImmerReducer(todoListReducer, initialState, init)
+
+  // 컨텍스트를 사용해 컨텍스트 내부의 모든 컴포넌트에 컨텍스트 값으로 공급
+  const actions: TodoListDispatchContextValue = useMemo(
+    () => ({
+      add: (newDoIt: Todo['doit']) => {
+        dispatch(addAction(newDoIt))
+      },
+      remove: (removeTodoId: Todo['id']) => {
+        dispatch(removeAction(removeTodoId))
+      },
+      toggle: (toggleTodoId: Todo['id']) => {
+        dispatch(toggleAction(toggleTodoId))
+      },
+      edit: (editTodoId: Todo['id'], newDoIt: Todo['doit']) => {
+        dispatch(editAction(editTodoId, newDoIt))
+      },
+      search: (searchTerm: string) => {
+        dispatch(searchAction(searchTerm))
+      },
+      hidden: (hiddenDoneTodos: boolean) => {
+        dispatch(hiddenAction(hiddenDoneTodos))
+      },
+    }),
+    [dispatch]
+  )
 
   // 부수 효과(Side effects)
   // 컨텍스트 상태가 변경될 때 마다, 스토리지에 데이터 저장
@@ -59,38 +95,37 @@ export default function TodoListProvider({
     }
   }, [state, persist])
 
-  // 컨텍스트를 사용해 컨텍스트 내부의 모든 컴포넌트에
-  // 컨텍스트 값으로 공급
-
-  const todoListStore = {
-    state,
-    add: (newDoIt: Todo['doit']) => dispatch(addAction(newDoIt)),
-    remove: (removeTodoId: Todo['id']) => dispatch(removeAction(removeTodoId)),
-    toggle: (toggleTodoId: Todo['id']) => dispatch(toggleAction(toggleTodoId)),
-    edit: (editTodoId: Todo['id'], newDoIt: Todo['doit']) =>
-      dispatch(editAction(editTodoId, newDoIt)),
-    search: (searchTerm: string) => dispatch(searchAction(searchTerm)),
-    hidden: (hiddenDoneTodos: boolean) =>
-      dispatch(hiddenAction(hiddenDoneTodos)),
-  }
-
   return (
-    <TodoListContext.Provider value={todoListStore}>
-      {children}
-    </TodoListContext.Provider>
+    <TodoListDispatchContext value={actions}>
+      <TodoListContext value={state}>{children}</TodoListContext>
+    </TodoListDispatchContext>
   )
 }
 
-// 컨텍스트 내부에서 사용 가능한 커스텀 훅 (컨텍스트 값 가져오기)
-// eslint-disable-next-line react-refresh/only-export-components
+// 컨텍스트 상태 값을 제공하는 커스텀 훅
+// (상태를 관리하는 컨텍스트 값 가져오기)
 export const useTodoList = () => {
-  const todoListState = useContext(TodoListContext)
+  const state = useContext(TodoListContext)
 
-  if (!todoListState) {
+  if (!state) {
     throw new Error(
       'useTodoList 훅은 TodoListProvider 내부에서 사용해야 합니다.'
     )
   }
 
-  return todoListState
+  return state
+}
+
+// 컨텍스트 상태 값 업데이트 함수를 포함하는 객체 값을 제공하는 커스텀 훅
+// (상태를 관리하는 컨텍스트 값 가져오기)
+export const useTodoListDispatch = () => {
+  const actions = useContext(TodoListDispatchContext)
+
+  if (!actions) {
+    throw new Error(
+      'useTodoListDispatch 훅은 TodoListProvider 내부에서 사용해야 합니다.'
+    )
+  }
+
+  return actions
 }

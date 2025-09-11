@@ -3,8 +3,7 @@ import TodoItem from '../todo-item'
 import S from './style.module.css'
 
 export default function TodoList() {
-  const { state } = useTodoList()
-  const { todos, search, hiddenDoneTodos } = state
+  const { todos, search, hiddenDoneTodos } = useTodoList()
 
   let filteredTodos = todos.filter((todo) =>
     todo.doit.toLowerCase().includes(search.toLowerCase())

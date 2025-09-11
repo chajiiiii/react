@@ -1,22 +1,27 @@
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { tw } from '@/utils'
-import { useTodoList } from '../../context'
+import { useTodoListDispatch } from '../../context'
 import type { Todo } from '../../types'
 import S from './style.module.css'
 
 export default function TodoItem({ item }: { item: Todo }) {
-  const { remove, toggle, edit } = useTodoList()
+  const { remove, toggle, edit } = useTodoListDispatch()
+
   const handleRemoveTodo = () => remove(item.id)
   const handleToggleTodo = () => toggle(item.id)
 
   const editInputRef = useRef<HTMLInputElement>(null)
   const [editMode, setEditMode] = useState<boolean>(false)
 
+  const handleEditModeOn = () => setEditMode(true)
+
   const handleSave = useCallback(() => {
     const editInput = editInputRef.current
     if (editInput) edit(item.id, editInput.value)
     setEditMode(false)
   }, [edit, item.id])
+
+  const editButtonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     const editInput = editInputRef.current
@@ -32,10 +37,10 @@ export default function TodoItem({ item }: { item: Todo }) {
       }
     } else {
       editInput?.removeEventListener('keydown', handleKeyControls)
+      const editButton = editButtonRef.current
+      setTimeout(() => editButton?.focus())
     }
   }, [editMode, handleSave])
-
-  const handleEditModeOn = () => setEditMode(true)
 
   if (editMode) {
     return <EditMode ref={editInputRef} item={item} onSave={handleSave} />
@@ -61,9 +66,10 @@ export default function TodoItem({ item }: { item: Todo }) {
         </label>
       </div>
       <button
-        onClick={handleEditModeOn}
+        ref={editButtonRef}
         className="button"
         type="button"
+        onClick={handleEditModeOn}
         data-button-edit
       >
         수정
