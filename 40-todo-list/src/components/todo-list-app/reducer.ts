@@ -6,6 +6,8 @@ import type { Todo } from './types'
 
 interface State {
   todos: Todo[]
+  search: string
+  hiddenDoneTodos: boolean
 }
 
 type Action =
@@ -16,6 +18,8 @@ type Action =
       type: typeof ACTION.EDIT
       payload: { editTodoId: Todo['id']; newDoIt: Todo['doit'] }
     }
+  | { type: typeof ACTION.SEARCH; payload: { searchTerm: string } }
+  | { type: typeof ACTION.HIDDEN; payload: { hiddenDoneTodos: boolean } }
 
 // --------------------------------------------------------------------------
 // 액션 타입
@@ -25,6 +29,8 @@ const ACTION = {
   REMOVE: '@todolist/remove-todo',
   TOGGLE: '@todolist/toggle-todo-done',
   EDIT: '@todolist/edit-todo',
+  SEARCH: '@todolist/search',
+  HIDDEN: '@todolist/hidden-done-todos',
 } as const
 
 // --------------------------------------------------------------------------
@@ -51,6 +57,16 @@ export const editAction = (
 ): Action => ({
   type: ACTION.EDIT,
   payload: { editTodoId, newDoIt },
+})
+
+export const searchAction = (searchTerm: string): Action => ({
+  type: ACTION.SEARCH,
+  payload: { searchTerm },
+})
+
+export const hiddenAction = (hiddenDoneTodos: boolean): Action => ({
+  type: ACTION.HIDDEN,
+  payload: { hiddenDoneTodos },
 })
 
 // --------------------------------------------------------------------------
@@ -104,6 +120,18 @@ export function todoListReducer(draft: Draft<State>, action: Action) {
       const { editTodoId, newDoIt } = action.payload
       const index = draft.todos.findIndex((todo) => todo.id === editTodoId)
       draft.todos[index].doit = newDoIt
+      break
+    }
+
+    case ACTION.SEARCH: {
+      const { searchTerm } = action.payload
+      draft.search = searchTerm
+      break
+    }
+
+    case ACTION.HIDDEN: {
+      const { hiddenDoneTodos } = action.payload
+      draft.hiddenDoneTodos = hiddenDoneTodos
       break
     }
 

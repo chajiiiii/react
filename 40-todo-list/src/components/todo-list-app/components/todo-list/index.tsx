@@ -4,12 +4,21 @@ import S from './style.module.css'
 
 export default function TodoList() {
   const { state } = useTodoList()
+  const { todos, search, hiddenDoneTodos } = state
+
+  let filteredTodos = todos.filter((todo) =>
+    todo.doit.toLowerCase().includes(search.toLowerCase())
+  )
+
+  if (hiddenDoneTodos) {
+    filteredTodos = filteredTodos.filter((todo) => !todo.done)
+  }
 
   return (
     <section>
       <h2 className="sr-only">할 일 목록</h2>
       <ul className={S.todoList}>
-        {state.todos.map((todo) => (
+        {filteredTodos.map((todo) => (
           <TodoItem key={todo.id} item={todo} />
         ))}
       </ul>

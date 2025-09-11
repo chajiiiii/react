@@ -8,9 +8,11 @@ import { useImmerReducer } from 'use-immer'
 import {
   addAction,
   editAction,
+  hiddenAction,
   init,
   removeAction,
   removeTodoListStorageData,
+  searchAction,
   setTodoListStorageData,
   todoListReducer,
   toggleAction,
@@ -34,6 +36,8 @@ const initialState = {
       done: true,
     },
   ],
+  search: '',
+  hiddenDoneTodos: false,
 }
 
 // 프로바이더 래퍼 컴포넌트
@@ -65,6 +69,9 @@ export default function TodoListProvider({
     toggle: (toggleTodoId: Todo['id']) => dispatch(toggleAction(toggleTodoId)),
     edit: (editTodoId: Todo['id'], newDoIt: Todo['doit']) =>
       dispatch(editAction(editTodoId, newDoIt)),
+    search: (searchTerm: string) => dispatch(searchAction(searchTerm)),
+    hidden: (hiddenDoneTodos: boolean) =>
+      dispatch(hiddenAction(hiddenDoneTodos)),
   }
 
   return (
