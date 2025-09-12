@@ -1,24 +1,9 @@
 // --------------------------------------------------------------------------
 // ✅ Supabase의 Todos 테이블용 클라이언트 API(함수)
 // --------------------------------------------------------------------------
-import { User } from '@supabase/supabase-js'
 import { toast } from 'sonner'
 import supabase, { type Todo, type TodoInsert, TodoUpdate } from '../index'
-
-// --------------------------------------------------------------------------
-// 사용자 (세션) 정보 가져오기
-const requiredUser = async (): Promise<User> => {
-  const { error, data } = await supabase.auth.getUser()
-
-  if (error) {
-    const errorMessage = '로그인이 필요합니다.'
-    toast.error(errorMessage + error.message)
-    throw new Error(errorMessage)
-  }
-
-  const { user } = data
-  return user
-}
+import requiredUser from './required-user'
 
 // --------------------------------------------------------------------------
 // 생성(Create)
