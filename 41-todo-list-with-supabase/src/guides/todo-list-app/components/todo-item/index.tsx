@@ -1,6 +1,7 @@
 import {
   ChangeEvent,
   RefObject,
+  memo,
   useCallback,
   useEffect,
   useRef,
@@ -12,7 +13,7 @@ import { tw } from '@/utils'
 import { useTodoListDispatch } from '../../context'
 import S from './style.module.css'
 
-export default function TodoItem({ todo }: { todo: Todo }) {
+function TodoItem({ todo }: { todo: Todo }) {
   const { removeTodo, editTodo } = useTodoListDispatch()
 
   // 할 일 삭제 기능 (비동기 함수로 변경)
@@ -98,6 +99,8 @@ export default function TodoItem({ todo }: { todo: Todo }) {
     </li>
   )
 }
+
+export default memo(TodoItem)
 
 function EditMode({
   ref,

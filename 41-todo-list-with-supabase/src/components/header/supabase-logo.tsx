@@ -1,4 +1,6 @@
-export default function SupabaseLogo({ size = 32 }: { size?: number }) {
+import { memo } from 'react'
+
+function SupabaseLogo({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 109 113" fill="none">
       <path
@@ -41,3 +43,8 @@ export default function SupabaseLogo({ size = 32 }: { size?: number }) {
     </svg>
   )
 }
+
+// 컴포넌트 메모이제이션 (메모화)
+// - 불필요한 렌더링되는 것을 차단
+// - 단지 부모 컴포넌트가 렌더링되었다는 이유만으로 자식이 렌더링되는 경우
+export default memo(SupabaseLogo)

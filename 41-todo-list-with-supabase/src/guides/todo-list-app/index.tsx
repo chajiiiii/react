@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import FilterForm from './components/filter-form/index'
 import FilterFormDebounce from './components/filter-form/index-debounce'
 import FilterFormThrottle from './components/filter-form/index-throttle'
@@ -6,7 +7,7 @@ import TodoList from './components/todo-list'
 import TodoListProvider from './context'
 import './style.css'
 
-export default function TodoListApp() {
+function TodoListApp() {
   return (
     <TodoListProvider>
       <section>
@@ -26,3 +27,5 @@ export default function TodoListApp() {
     </TodoListProvider>
   )
 }
+
+export default memo(TodoListApp)

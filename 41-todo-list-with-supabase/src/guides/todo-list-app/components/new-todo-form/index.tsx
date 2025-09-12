@@ -1,11 +1,11 @@
-import { FormEvent } from 'react'
+import { FormEvent, memo } from 'react'
 import { Todo } from '@/libs/supabase'
 import { createTodo } from '@/libs/supabase/api/todos'
 import { tw } from '@/utils'
 import { useTodoListDispatch } from '../../context'
 import S from './style.module.css'
 
-export default function NewTodoForm() {
+function NewTodoForm() {
   // 클라이언트 앱 화면 업데이트 함수
   const { addTodo } = useTodoListDispatch()
 
@@ -47,3 +47,5 @@ export default function NewTodoForm() {
     </section>
   )
 }
+
+export default memo(NewTodoForm)

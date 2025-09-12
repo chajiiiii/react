@@ -6,6 +6,7 @@ import {
   useMemo,
 } from 'react'
 import { useImmerReducer } from 'use-immer'
+import { useAuth } from '@/contexts/auth'
 import type { Todo } from '@/libs/supabase'
 import { readTodos } from '@/libs/supabase/api/todos'
 import {
@@ -45,6 +46,16 @@ export default function TodoListProvider({
   persist = false,
 }: PropsWithChildren<{ persist?: boolean }>) {
   const [state, dispatch] = useImmerReducer(reducer, initialState, init)
+
+  const { isAuthenticated, user } = useAuth()
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      console.log('로그인')
+    } else {
+      console.log('로그아웃')
+    }
+  }, [dispatch, isAuthenticated, user])
 
   // [부수효과] Supabase 데이터베이스의 Todos 테이블 행(rows) 데이터 조회 요청
   useEffect(() => {
