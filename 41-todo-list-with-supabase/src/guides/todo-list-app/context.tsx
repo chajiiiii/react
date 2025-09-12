@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import {
   type PropsWithChildren,
   createContext,
@@ -7,9 +6,9 @@ import {
   useMemo,
 } from 'react'
 import { useImmerReducer } from 'use-immer'
+import type { Todo } from '@/libs/supabase'
 import {
   type State,
-  Todo,
   addTodoAction,
   editTodoAction,
   init,
@@ -22,10 +21,12 @@ import {
   toggleDoneAction,
 } from './reducer'
 
-interface DispatchContextValue {
+interface TodoListDispatchContextValueValue {
+  // 서버 측 데이터(server data) 상태
   addTodo: (newTodo: Todo) => void
-  removeTodo: (removeId: string) => void
+  removeTodo: (removeId: Todo['id']) => void
   editTodo: (editTodo: Todo) => void
+  // 클라이언트 측 데이터(client data) 상태
   searchTodos: (search: State['search']) => void
   toggleDone: () => void
 }
@@ -33,7 +34,8 @@ interface DispatchContextValue {
 const TodoListContext = createContext<State | null>(null)
 TodoListContext.displayName = 'TodoListContext'
 
-const TodoListDispatchContext = createContext<DispatchContextValue | null>(null)
+const TodoListDispatchContext =
+  createContext<TodoListDispatchContextValueValue | null>(null)
 TodoListDispatchContext.displayName = 'TodoListDispatchContext'
 
 export default function TodoListProvider({
@@ -80,6 +82,7 @@ export default function TodoListProvider({
   )
 }
 
+/* eslint-disable react-refresh/only-export-components */
 export const useTodoList = () => {
   const state = useContext(TodoListContext)
 

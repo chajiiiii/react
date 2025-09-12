@@ -1,16 +1,13 @@
 import type { Draft } from 'immer'
+import type { Todo } from '@/libs/supabase'
 
 // --------------------------------------------------------------------------
 // 타입
 
-export interface Todo {
-  id: string
-  doit: string
-  done: boolean
-}
-
 export interface State {
+  // 서버 측 데이터(server data) 상태
   todos: Todo[]
+  // 클라이언트 측 데이터(client data) 상태
   search: string
   hiddenDoneTodos: boolean
 }
@@ -26,7 +23,7 @@ export type Action =
 // 초깃값
 
 export const initialState: State = {
-  todos: [{ id: 'todo-1', doit: '할 일 생성', done: false }],
+  todos: [],
   search: '',
   hiddenDoneTodos: false,
 }
