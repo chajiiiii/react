@@ -13,6 +13,7 @@ export interface State {
 }
 
 export type Action =
+  | { type: typeof ACTION.SET_TODOS; payload: { todos: Todo[] } }
   | { type: typeof ACTION.ADD_TODO; payload: { newTodo: Todo } }
   | { type: typeof ACTION.REMOVE_TODO; payload: { removeId: Todo['id'] } }
   | { type: typeof ACTION.EDIT_TODO; payload: { editTodo: Todo } }
@@ -20,19 +21,60 @@ export type Action =
   | { type: typeof ACTION.TOGGLE_DONE }
 
 // --------------------------------------------------------------------------
-// 초깃값
 
-export const initialState: State = {
-  todos: [],
-  search: '',
-  hiddenDoneTodos: false,
-}
+// 액션 타입
+const ACTION = {
+  SET_TODOS: '@todolist/set-todos',
+  ADD_TODO: '@todolist/add',
+  REMOVE_TODO: '@todolist/remove',
+  EDIT_TODO: '@todolist/edit',
+  SEARCH_TODOS: '@todolist/search-todos',
+  TOGGLE_DONE: '@todolist/toggle-done-todos',
+} as const
+
+// --------------------------------------------------------------------------
+// 액션 크리에이터
+
+export const setTodosAction = (todos: Todo[]): Action => ({
+  type: ACTION.SET_TODOS,
+  payload: { todos },
+})
+
+export const addTodoAction = (newTodo: Todo): Action => ({
+  type: ACTION.ADD_TODO,
+  payload: { newTodo },
+})
+
+export const removeTodoAction = (removeId: Todo['id']): Action => ({
+  type: ACTION.REMOVE_TODO,
+  payload: { removeId },
+})
+
+export const editTodoAction = (editTodo: Todo): Action => ({
+  type: ACTION.EDIT_TODO,
+  payload: { editTodo },
+})
+
+export const searchTodosAction = (search: State['search']): Action => ({
+  type: ACTION.SEARCH_TODOS,
+  payload: { search },
+})
+
+export const toggleDoneAction = (): Action => ({
+  type: ACTION.TOGGLE_DONE,
+})
 
 // --------------------------------------------------------------------------
 // 리듀서
 
 export function reducer(draft: Draft<State>, action: Action) {
   switch (action.type) {
+    case ACTION.SET_TODOS: {
+      const { todos } = action.payload
+      draft.todos = todos
+      break
+    }
+
     case ACTION.ADD_TODO: {
       const { newTodo } = action.payload
       draft.todos.unshift(newTodo)
@@ -71,46 +113,19 @@ export function reducer(draft: Draft<State>, action: Action) {
 }
 
 // --------------------------------------------------------------------------
-
-// 액션 타입
-const ACTION = {
-  ADD_TODO: '@todolist/add',
-  REMOVE_TODO: '@todolist/remove',
-  EDIT_TODO: '@todolist/edit',
-  SEARCH_TODOS: '@todolist/search-todos',
-  TOGGLE_DONE: '@todolist/toggle-done-todos',
-} as const
-
-// 액션 크리에이터
-export const addTodoAction = (newTodo: Todo): Action => ({
-  type: ACTION.ADD_TODO,
-  payload: { newTodo },
-})
-
-export const removeTodoAction = (removeId: Todo['id']): Action => ({
-  type: ACTION.REMOVE_TODO,
-  payload: { removeId },
-})
-
-export const editTodoAction = (editTodo: Todo): Action => ({
-  type: ACTION.EDIT_TODO,
-  payload: { editTodo },
-})
-
-export const searchTodosAction = (search: State['search']): Action => ({
-  type: ACTION.SEARCH_TODOS,
-  payload: { search },
-})
-
-export const toggleDoneAction = (): Action => ({
-  type: ACTION.TOGGLE_DONE,
-})
-
-// --------------------------------------------------------------------------
 // 초기화 함수
 
 export const init = (initialState: State) => {
   return getTodoListStorageData() ?? initialState
+}
+
+// --------------------------------------------------------------------------
+// 초깃값
+
+export const initialState: State = {
+  todos: [],
+  search: '',
+  hiddenDoneTodos: false,
 }
 
 // --------------------------------------------------------------------------

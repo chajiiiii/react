@@ -27,7 +27,10 @@ export const createTodo = async (newTodo: TodoInsert): Promise<Todo> => {
 // 조회(Read)
 
 export const readTodos = async (): Promise<Todo[]> => {
-  const { error, data: todos } = await supabase.from('todos').select('*')
+  const { error, data: todos } = await supabase
+    .from('todos')
+    .select('*')
+    .order('created_at', { ascending: false })
 
   if (error) {
     const errorMessage = '할 일 목록(Todos) 조회 실패!'

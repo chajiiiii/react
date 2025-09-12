@@ -6,14 +6,27 @@ import {
   useRef,
   useState,
 } from 'react'
+import type { Todo } from '@/libs/supabase'
+import { deleteTodo } from '@/libs/supabase/api/todos'
 import { tw } from '@/utils'
 import { useTodoListDispatch } from '../../context'
-import { type Todo } from '../../reducer'
 import S from './style.module.css'
 
 export default function TodoItem({ todo }: { todo: Todo }) {
   const { removeTodo, editTodo } = useTodoListDispatch()
-  const handleRemove = () => removeTodo(todo.id)
+
+  // 할 일 삭제 기능
+  const handleRemove = async () => {
+    const deleteTodoId: Todo['id'] = todo.id
+    // 비동기 처리
+    const deletedTodo = await deleteTodo(deleteTodoId)
+    console.log(deletedTodo)
+
+    // 동기 처리
+    removeTodo(deleteTodoId)
+  }
+
+  // 할 일 완료 여부 토글 기능
   const handleToggle = (e: ChangeEvent<HTMLInputElement>) => {
     editTodo({ ...todo, done: e.target.checked })
   }

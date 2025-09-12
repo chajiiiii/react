@@ -51,21 +51,21 @@ export type Database = {
         Row: {
           created_at: string
           doit: string
-          done: string
+          done: boolean
           id: string
           updated_at: string | null
         }
         Insert: {
           created_at?: string
           doit: string
-          done?: string
+          done?: boolean
           id?: string
           updated_at?: string | null
         }
         Update: {
           created_at?: string
           doit?: string
-          done?: string
+          done?: boolean
           id?: string
           updated_at?: string | null
         }
