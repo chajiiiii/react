@@ -15,8 +15,6 @@ export default function TodoList() {
     filteredTodos = filteredTodos.filter((todo) => !todo.done)
   }
 
-  // console.log(todos, filteredTodos, hiddenDoneTodos)
-
   return (
     <section>
       <h2 className="sr-only">할 일 목록</h2>
