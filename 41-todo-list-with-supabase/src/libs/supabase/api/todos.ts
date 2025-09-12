@@ -23,7 +23,7 @@ const requiredUser = async (): Promise<User> => {
 // --------------------------------------------------------------------------
 // 생성(Create)
 
-export const createTodo = async (newTodo: TodoInsert): Promise<Todo | void> => {
+export const createTodo = async (newTodo: TodoInsert): Promise<Todo> => {
   // 서버에 요청하기 전에 인증된 사용자인지 검증
   const user = await requiredUser()
 
@@ -71,7 +71,7 @@ export const updateTodo = async (
 ): Promise<Todo> => {
   const { error, data: updatedTodo } = await supabase
     .from('todos')
-    .update(updateTodo)
+    .update({ ...updateTodo, updated_at: new Date().toISOString() })
     .eq('id', updateTodo.id)
     .select('*')
     .single()
@@ -89,10 +89,13 @@ export const updateTodo = async (
 // 삭제(Delete)
 
 export const deleteTodo = async (deleteTodoId: Todo['id']): Promise<Todo> => {
+  const user = await requiredUser()
+
   const { error, data: deletedTodo } = await supabase
     .from('todos')
     .delete()
     .eq('id', deleteTodoId)
+    .eq('user_id', user.id)
     .select()
     .single()
 
