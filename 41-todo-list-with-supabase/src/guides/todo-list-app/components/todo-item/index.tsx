@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react'
 import type { Todo } from '@/libs/supabase'
-import { deleteTodo } from '@/libs/supabase/api/todos'
+import { deleteTodo, updateTodo } from '@/libs/supabase/api/todos'
 import { tw } from '@/utils'
 import { useTodoListDispatch } from '../../context'
 import S from './style.module.css'
@@ -15,20 +15,25 @@ import S from './style.module.css'
 export default function TodoItem({ todo }: { todo: Todo }) {
   const { removeTodo, editTodo } = useTodoListDispatch()
 
-  // 할 일 삭제 기능
+  // 할 일 삭제 기능 (비동기 함수로 변경)
   const handleRemove = async () => {
-    const deleteTodoId: Todo['id'] = todo.id
     // 비동기 처리
-    const deletedTodo = await deleteTodo(deleteTodoId)
-    console.log(deletedTodo)
+    const deletedTodo = await deleteTodo(todo.id)
 
     // 동기 처리
-    removeTodo(deleteTodoId)
+    removeTodo(deletedTodo.id)
   }
 
-  // 할 일 완료 여부 토글 기능
-  const handleToggle = (e: ChangeEvent<HTMLInputElement>) => {
-    editTodo({ ...todo, done: e.target.checked })
+  // 할 일 완료 여부 토글 기능 (비동기 함수로 변경)
+  const handleToggle = async (e: ChangeEvent<HTMLInputElement>) => {
+    // 비동기 처리 (Superbase 단에서 처리)
+    const updatedTodo = await updateTodo({
+      id: todo.id,
+      done: e.target.checked,
+    })
+
+    // 동기 처리 (UI 단에서 처리)
+    editTodo(updatedTodo)
   }
 
   const inputRef = useRef<HTMLInputElement>(null)
@@ -105,12 +110,18 @@ function EditMode({
   onEdit: (editTodo: Todo) => void
   onEditModeOff: () => void
 }) {
-  const handleEdit = useCallback(() => {
+  // 비동기 함수로 변경
+  const handleEdit = useCallback(async () => {
     const input = ref.current
 
     if (input) {
-      const editTodo = { ...todo, doit: input.value }
-      onEdit(editTodo)
+      // 비동기 요청(supabase)
+      const updatedTodo = await updateTodo({ id: todo.id, doit: input.value })
+
+      // 동기 요청(TodoList 컨텍스트 상태 업데이트)
+      onEdit(updatedTodo)
+
+      // 편집 모드 종료
       onEditModeOff()
     }
   }, [onEdit, onEditModeOff, todo, ref])
