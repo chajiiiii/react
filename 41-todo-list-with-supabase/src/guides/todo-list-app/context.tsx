@@ -52,8 +52,13 @@ export default function TodoListProvider({
   useEffect(() => {
     if (isAuthenticated && user) {
       console.log('로그인')
+      readTodos().then((todos) => {
+        dispatch(setTodosAction(todos))
+      })
     } else {
       console.log('로그아웃')
+      // 로그아웃 시, todos 데이터 초기화
+      dispatch(setTodosAction([]))
     }
   }, [dispatch, isAuthenticated, user])
 

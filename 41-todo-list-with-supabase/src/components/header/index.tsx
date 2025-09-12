@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { Dialog } from '@/components'
 import { SignInForm, SignUpForm } from '@/components/form'
 import { useAuth, useAuthDispatch } from '@/contexts/auth'
@@ -8,7 +8,7 @@ import SupabaseLogo from './supabase-logo'
 
 type FormType = 'signin' | 'signup'
 
-export default function Header() {
+function Header() {
   // 인증 컨텍스트 사용
   const { user, isLoading } = useAuth()
   const { signOut } = useAuthDispatch()
@@ -100,3 +100,5 @@ export default function Header() {
     </header>
   )
 }
+
+export default memo(Header)
