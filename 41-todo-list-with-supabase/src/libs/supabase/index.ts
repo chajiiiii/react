@@ -18,8 +18,13 @@ const supabase = createClient<Database>(
 // 인스턴스 기본 내보내기
 export default supabase
 
-// Profile 타입 내보내기
+// profile 테이블 타입 내보내기
 export type Profile = Tables<'profiles'>
 export type ProfilePartial = Partial<Profile>
 export type ProfileInsert = TablesInsert<'profiles'>
 export type ProfileUpdate = TablesUpdate<'profiles'>
+
+// todos 테이블 타입 내보내기
+export type Todo = Tables<'todos'>
+export type TodoInsert = TablesInsert<'todos'>
+export type TodoUpdate = TablesUpdate<'todos'>

@@ -38,7 +38,9 @@ interface AuthContextDispatchValue {
 // Auth 컨텍스트 생성
 
 const AuthContext = createContext<AuthContextValue | null>(null)
+AuthContext.displayName = 'AuthContext'
 const AuthContextDispach = createContext<AuthContextDispatchValue | null>(null)
+AuthContextDispach.displayName = 'AuthContextDispatch'
 
 // --------------------------------------------------------------------------
 // AuthProvider 컴포넌트
