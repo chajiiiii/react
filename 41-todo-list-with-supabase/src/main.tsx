@@ -15,7 +15,7 @@ createRoot(root).render(
       <AuthProvider>
         <App />
       </AuthProvider>
-      <Toaster position="bottom-right" />
+      <Toaster position="top-center" />
     </ErrorBoundary>
   </StrictMode>
 )
