@@ -65,3 +65,61 @@ export const updateProfileTable = async (
 
   return data
 }
+
+export const removePreviousProfileImage = async (
+  profileImage: string | null
+): Promise<void> => {
+  const user = await requiredUser()
+
+  if (profileImage) {
+    const oldFileName = profileImage.split('/').pop()
+    if (oldFileName) {
+      const oldFilePath = `${user.id}/${oldFileName}`
+      const { error } = await supabase.storage
+        .from('profiles')
+        .remove([oldFilePath])
+      if (error) {
+        const errorMessage = `이전 프로필 이미지 삭제 오류 발생! ${error.message}`
+        toast.error(errorMessage)
+        throw new Error(errorMessage)
+      }
+    }
+  }
+}
+
+export const uploadProfilePublicUrl = async (
+  filePath: string,
+  selectedFile: File
+): Promise<string> => {
+  const { error: uploadProfileError } = await supabase.storage
+    .from('profiles')
+    .upload(filePath, selectedFile)
+
+  if (uploadProfileError) {
+    const errorMessage = `프로필 이미지 업로드 실패 오류 발생! ${uploadProfileError.message}`
+    toast.error(errorMessage)
+    throw new Error(errorMessage)
+  }
+
+  const { data } = supabase.storage.from('profiles').getPublicUrl(filePath)
+  const { publicUrl } = data
+
+  return publicUrl
+}
+
+export const updateProfilImage = async (
+  publicUrl: Profile['profile_image']
+): Promise<void> => {
+  const user = await requiredUser()
+
+  const { error: updateProfileError } = await supabase
+    .from('profiles')
+    .update({ profile_image: publicUrl })
+    .eq('id', user.id)
+
+  if (updateProfileError) {
+    const errorMessage = `프로필 이미지 URL 저장 실패 오류 발생! ${updateProfileError.message}`
+    toast.error(errorMessage)
+    throw new Error(errorMessage)
+  }
+}
