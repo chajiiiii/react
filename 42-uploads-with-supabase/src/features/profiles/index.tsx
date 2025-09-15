@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/auth'
 import supabase from '@/libs/supabase'
 import {
   getUserDataFromProfileDB,
+  updateProfileTable,
   updateUserMetadata,
 } from '@/libs/supabase/api/profiles'
 import { tw } from '@/utils'
@@ -96,41 +97,21 @@ export default function Profile() {
       // 사용자(user) 메타데이터 업데이트
       // - 폼 데이터 값으로 'email', 'data.username', 'data.bio' 업데이트
       // - 오류 처리 '프로필 업데이트 오류 발생! {오류.메시지}' -> 오류 발생 시, 함수 종료
-      await updateUserMetadata(formData.email, formData.username, formData.bio)
+      const { email, username, bio } = formData
+      await updateUserMetadata(email, username, bio)
 
       // [실습]
       // 프로필(profiles) 테이블 업데이트
       // - 폼 데이터로 'username', 'email', 'bio', 'updated_at' 업데이트
       // - 인증된 사용자의 프로필 행을 찾아 업데이트
       // - 오류 처리 '프로필 테이블 업데이트 오류 발생! {오류.메시지}' -> 오류 발생 시, 함수 종료
-      const { error: profileUpdateError, data: updatedProfileData } =
-        await supabase
-          .from('profiles')
-          // RLS 보안 정책 없어요! (수정 불가능 오류)
-          .update({
-            username: formData.username,
-            email: formData.email,
-            bio: formData.bio,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', user.id)
-          .select('username, email, bio')
-          .single()
+      const updatedProfileData = await updateProfileTable(email, username, bio)
 
-      if (profileUpdateError) {
-        const errorMessage = `프로필 테이블 업데이트 오류 발생! ${profileUpdateError.message}`
-        toast.error(errorMessage)
-        throw new Error(errorMessage)
-      }
-
-      // 폼 데이터를 응답받은 profiles 테이블의 데이터로 재설정
-      const { username, email, bio } = updatedProfileData
-
-      if (email) {
+      if (updatedProfileData.email) {
         reset({
-          username,
-          email,
-          bio,
+          username: updatedProfileData.username,
+          email: updatedProfileData.email,
+          bio: updatedProfileData.bio,
         })
       }
 
