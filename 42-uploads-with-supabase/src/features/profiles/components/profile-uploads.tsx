@@ -8,9 +8,10 @@ import {
 import { LucideTrash, LucideUpload } from 'lucide-react'
 import { toast } from 'sonner'
 import { v4 as uuidv4 } from 'uuid'
-import supabase from '@/libs/supabase'
 import {
   removePreviousProfileImage,
+  removeProfileStorage,
+  resetProfileTable,
   updateProfilImage,
   uploadProfilePublicUrl,
 } from '@/libs/supabase/api/profiles'
@@ -91,30 +92,8 @@ export default function ProfileUploads({
       const fileName = profileImage.split('/').pop() || ''
       const filePath = `${user.id}/${fileName}`
 
-      const { error: removeProfileError } = await supabase.storage
-        .from('profiles')
-        .remove([filePath])
-
-      if (removeProfileError) {
-        const errorMessage = `스토리지에서 이미지 삭제 오류 발생! ${removeProfileError.message}`
-        toast.error(errorMessage, {
-          cancel: { label: '닫기', onClick: () => console.log('닫기') },
-        })
-        throw new Error(errorMessage)
-      }
-
-      const { error: updateProfileError } = await supabase
-        .from('profiles')
-        .update({ profile_image: null })
-        .eq('id', user.id)
-
-      if (updateProfileError) {
-        const errorMessage = `데이터베이스에서 이미지 경로 null 수정 오류 발생! ${updateProfileError.message}`
-        toast.error(errorMessage, {
-          cancel: { label: '닫기', onClick: () => console.log('닫기') },
-        })
-        throw new Error(errorMessage)
-      }
+      await removeProfileStorage(filePath)
+      await resetProfileTable()
 
       setProfileImage(null)
       toast.success('프로필 이미지가 삭제되었습니다.')

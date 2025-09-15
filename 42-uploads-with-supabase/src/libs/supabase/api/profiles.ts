@@ -123,3 +123,34 @@ export const updateProfilImage = async (
     throw new Error(errorMessage)
   }
 }
+
+export const removeProfileStorage = async (filePath: string) => {
+  const { error: removeProfileError } = await supabase.storage
+    .from('profiles')
+    .remove([filePath])
+
+  if (removeProfileError) {
+    const errorMessage = `스토리지에서 이미지 삭제 오류 발생! ${removeProfileError.message}`
+    toast.error(errorMessage, {
+      cancel: { label: '닫기', onClick: () => console.log('닫기') },
+    })
+    throw new Error(errorMessage)
+  }
+}
+
+export const resetProfileTable = async () => {
+  const user = await requiredUser()
+
+  const { error: updateProfileError } = await supabase
+    .from('profiles')
+    .update({ profile_image: null })
+    .eq('id', user.id)
+
+  if (updateProfileError) {
+    const errorMessage = `데이터베이스에서 이미지 경로 null 수정 오류 발생! ${updateProfileError.message}`
+    toast.error(errorMessage, {
+      cancel: { label: '닫기', onClick: () => console.log('닫기') },
+    })
+    throw new Error(errorMessage)
+  }
+}
