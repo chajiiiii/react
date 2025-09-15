@@ -177,7 +177,14 @@ export default function Profile() {
                 const oldFilePath = `${user.id}/${oldFileName}`
                 // [실습]
                 // supabase 스토리지 'profiles' 버킷에서 이전 프로필 이미지 삭제
-                console.log(oldFilePath)
+                const { error } = await supabase.storage
+                  .from('profiles')
+                  .remove([oldFilePath])
+                if (error) {
+                  const errorMessage = `이전 프로필 이미지 삭제 오류 발생! ${error.message}`
+                  toast.error(errorMessage)
+                  throw new Error(errorMessage)
+                }
               }
             }
 
@@ -191,18 +198,39 @@ export default function Profile() {
             // [실습]
             // supabase 스토리지 'profiles' 버킷에 파일 경로로 선택된 파일 업로드
             // - 오류 처리 '이미지 업로드 실패! {오류.메시지}'
-            console.log(filePath)
+            const { error: uploadProfileError } = await supabase.storage
+              .from('profiles')
+              .upload(filePath, selectedFile)
+
+            if (uploadProfileError) {
+              const errorMessage = `프로필 이미지 업로드 실패 오류 발생! ${uploadProfileError.message}`
+              toast.error(errorMessage)
+              throw new Error(errorMessage)
+            }
 
             // [실습]
             // 업로드된 파일의 공개 URL 가져오기
             // - supabase 스토리지 'profiles' 버킷에서 파일 경로로 공개된 URL 가져오기
-            const data = { publicUrl: '' }
+            const { data } = supabase.storage
+              .from('profiles')
+              .getPublicUrl(filePath)
+
             const { publicUrl } = data
 
             // [실습]
             // 프로필(profiles) 테이블의 이미지 URL 업데이트
             // - 인증된 사용자 행에 profile_image 필드에 업데이트
             // - 오류 처리 '프로필 이미지 URL 저장 실패! {오류.메시지}' -> 오류 발생 시, 함수 종료
+            const { error: updateProfileError } = await supabase
+              .from('profiles')
+              .update({ profile_image: publicUrl })
+              .eq('id', user.id)
+
+            if (updateProfileError) {
+              const errorMessage = `프로필 이미지 URL 저장 실패 오류 발생! ${updateProfileError.message}`
+              toast.error(errorMessage)
+              throw new Error(errorMessage)
+            }
 
             // 상태 업데이트
             setProfileImage(publicUrl)
