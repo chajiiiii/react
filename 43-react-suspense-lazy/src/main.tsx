@@ -1,5 +1,6 @@
-import { StrictMode } from 'react'
+import { StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
+import { LucideLoader } from 'lucide-react'
 import { Toaster } from 'sonner'
 import { ErrorBoundary } from '@/components'
 import { AuthProvider } from '@/contexts/auth'

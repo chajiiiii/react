@@ -1,3 +1,5 @@
+import { Suspense } from 'react'
+import { LucideLoader } from 'lucide-react'
 import { Container, Header, LearnSection } from '@/components'
 import { SuspenseAndLazy } from './features'
 import Profile from './features/profiles'
