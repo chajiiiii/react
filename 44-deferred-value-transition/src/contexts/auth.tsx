@@ -2,7 +2,7 @@ import type { AuthError, Session, User } from '@supabase/supabase-js'
 import {
   type PropsWithChildren,
   createContext,
-  useContext,
+  use,
   useEffect,
   useMemo,
   useState,
@@ -180,7 +180,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
 // Auth 컨텍스트 커스텀 훅
 
 export function useAuth(): AuthContextValue {
-  const contextValue = useContext(AuthContext)
+  let contextValue = null
+
+  if (!contextValue) {
+    // use 함수(API)는 훅 함수가 아니므로
+    // 조건문 내부에서 사용하는 것이 가능하다!
+    contextValue = use(AuthContext)
+  }
 
   if (!contextValue) {
     throw new Error('useAuth는 AuthProvider 내부에서 사용해야 합니다.')
@@ -190,7 +196,7 @@ export function useAuth(): AuthContextValue {
 }
 
 export function useAuthDispatch(): AuthContextDispatchValue {
-  const contextValue = useContext(AuthContextDispach)
+  const contextValue = use(AuthContextDispach)
 
   if (!contextValue) {
     throw new Error('useAuthDispatch는 AuthProvider 내부에서 사용해야 합니다.')
