@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { performanceDelay, tw } from '@/utils'
 
 // 슬로우리스트
@@ -23,6 +24,8 @@ export function SlowList({ query }: { query: string }) {
     </ul>
   )
 }
+
+export const MemoizedSlowList = memo(SlowList)
 
 // 슬로우리스트 플레이스홀더
 export function SlowListPlaceholder() {
