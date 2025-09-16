@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { performanceDelay, tw } from '@/utils'
 
 type Tab = 'posts' | 'comments' | 'authors'
@@ -11,6 +11,7 @@ export default function Tabs() {
   // 사용자 경험을 향상시켜 봅니다.
 
   function handleTabChange(nextTab: Tab) {
+    // 즉각적인 상태 업데이트 리액트에 요청
     setTab(nextTab)
   }
 
@@ -29,19 +30,13 @@ export default function Tabs() {
       </div>
 
       <TabWrapper>
-        <TabPanel tab={tab} />
+        <TabPanel key={tab} tab={tab} />
       </TabWrapper>
     </div>
   )
 }
 
 function TabPanel({ tab }: { tab: Tab }) {
-  const listRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    listRef.current?.scroll({ top: 0 })
-  }, [tab])
-
   // 탭에 따라 다른 콘텐츠 렌더링
   let render
 
@@ -67,9 +62,7 @@ function TabPanel({ tab }: { tab: Tab }) {
       >
         {tab.charAt(0).toUpperCase() + tab.slice(1)}
       </h2>
-      <div ref={listRef} className={tw('max-h-96 overflow-y-auto')}>
-        {render}
-      </div>
+      <div className={tw('max-h-96 overflow-y-auto')}>{render}</div>
     </div>
   )
 }
