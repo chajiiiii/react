@@ -1,4 +1,4 @@
-import { type ComponentProps } from 'react'
+import { type ComponentProps, memo } from 'react'
 import { performanceDelay, tw } from '@/utils'
 
 // [실습]
@@ -29,4 +29,9 @@ function SlowChild({
   )
 }
 
-export default SlowChild
+// 이전에 전달된 props와 현재 전달된 props 비교
+// 비교한 결과 변화가 없다면 렌더링 안함
+// 다만, 얕은 비교를 수행하므로
+// props가 깊은 비교를 요하는 객체 또는
+// 배열인 경우, 고급 비교가 필요
+export default memo(SlowChild)
