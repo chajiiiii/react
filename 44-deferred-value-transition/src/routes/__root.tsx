@@ -1,12 +1,13 @@
 import { Outlet, createRootRoute, useNavigate } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { MouseEvent, useCallback } from 'react'
+import { MouseEvent, useCallback, useTransition } from 'react'
 import { NavLink } from '@/components'
 
 const navigation: { path: string; text: string }[] = [
   { path: '/deferred-value', text: '지연된 값' },
   { path: '/transition', text: '트랜지션' },
   { path: '/use-function', text: 'use 함수' },
+  // { path: '/action', text: '액션' },
 ]
 
 function RootLayout() {
@@ -16,13 +17,19 @@ function RootLayout() {
   // 트랜지션을 사용해 페이지 전환 시, 사용자 경혐을 향상시켜보세요.
   // 문제 상황은 페이지 전환 과정에서 렌더링이 지연되고 있어
   // 렌더링 대기 시간 동안 앱이 멈춘 것처럼 보입니다.
-  const isPending = false
+
+  const [isPending, startTransition] = useTransition()
+
   const handleNavigation = useCallback(
     (e: MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault()
       const aElement = e.target as HTMLAnchorElement
       const href = aElement.getAttribute('href')
-      if (href) navigate({ to: href })
+      if (href) {
+        startTransition(() => {
+          navigate({ to: href })
+        })
+      }
     },
     [navigate]
   )
