@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { UsingAction } from '@/features/action-state'
+import { UsingAction, UsingActionState } from '@/features/action-state'
 
 function Page() {
   return (
     <>
       <UsingAction />
-      {/* <UsingActionState /> */}
+      <UsingActionState />
       {/* <OptimisticUI /> */}
     </>
   )

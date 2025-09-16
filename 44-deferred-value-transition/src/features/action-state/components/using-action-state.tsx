@@ -1,18 +1,29 @@
-import { useId, useState, useTransition } from 'react'
+import { useActionState, useId } from 'react'
 import { tw, wait } from '@/utils'
 
 export default function UsingActionState() {
   const id = useId()
-  const [data, setData] = useState<string>('1')
-  const [isPending, startTransition] = useTransition()
 
-  const formAction = async (formData: FormData) => {
-    startTransition(async () => {
-      const age = formData.get('age') as string
+  // 이전에 작성된 코드
+  // const [data, setData] = useState<string>('1')
+  // const [isPending, startTransition] = useTransition()
+
+  // const formAction = async (formData: FormData) => {
+  //   startTransition(async () => {
+  //     const age = formData.get('age') as string
+  //     await wait(1)
+  //     setData(age)
+  //   })
+  // }
+
+  // useActionState 훅을 사용한 코드
+  const [age, formAction, isPending] = useActionState(
+    async (_state: string, formData: FormData) => {
       await wait(1)
-      setData(age)
-    })
-  }
+      return formData.get('age') as string
+    },
+    '1'
+  )
 
   return (
     <form
@@ -34,7 +45,7 @@ export default function UsingActionState() {
           'border border-gray-300 rounded',
           'focus:outline-none focus:ring-2 focus:ring-indigo-500'
         )}
-        defaultValue={data}
+        defaultValue={age}
         min={1}
       />
       <button
@@ -52,7 +63,7 @@ export default function UsingActionState() {
         <div
           className={tw('text-center text-sm font-semibold text-indigo-700')}
         >
-          나이 = {data}
+          나이 = {age}
         </div>
       )}
     </form>
