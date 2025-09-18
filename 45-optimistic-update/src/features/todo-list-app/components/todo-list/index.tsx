@@ -3,12 +3,12 @@ import TodoItem from '../todo-item'
 import S from './style.module.css'
 
 export default function TodoList() {
-  const { todos, search, hiddenDoneTodos } = useTodoList()
+  const { optimisticTodos, search, hiddenDoneTodos } = useTodoList()
 
-  let filteredTodos = todos
+  let filteredTodos = optimisticTodos
 
   if (search.trim() !== '') {
-    filteredTodos = todos.filter((todo) => todo.doit.includes(search))
+    filteredTodos = optimisticTodos.filter((todo) => todo.doit.includes(search))
   }
 
   if (hiddenDoneTodos) {

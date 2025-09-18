@@ -4,17 +4,28 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useOptimistic,
 } from 'react'
 import { useImmerReducer } from 'use-immer'
 import { useAuth } from '@/contexts/auth'
 import type { Todo } from '@/libs/supabase'
-import { readTodos } from '@/libs/supabase/api/todos'
 import {
+  createTodo,
+  deleteTodo,
+  readTodos,
+  updateTodo,
+} from '@/libs/supabase/api/todos'
+import { wait } from '@/utils'
+import {
+  ACTION_TYPE,
+  type Action,
+  type Init,
   type State,
   addTodoAction,
   editTodoAction,
   init,
   initialState,
+  optimisticRollbackAction,
   reducer,
   removeTodoAction,
   removeTodoListStorageData,
@@ -48,19 +59,104 @@ export default function TodoListProvider({
   // --------------------------------------------------------------------------
   // 상태(State)
 
-  const [state, dispatch] = useImmerReducer(reducer, initialState, init)
+  const [state, dispatch] = useImmerReducer<State, Action, Init>(
+    reducer,
+    initialState,
+    init
+  )
 
+  // 옵티미스틱 UI 상태
+  const [optimisticTodos, updateOptimisticTodos] = useOptimistic<
+    State['todos'],
+    Action
+  >(
+    // 서버의 데이터베이스 todos 테이블과
+    // 리액트 앱에서 동기화해야 할 상태 데이터: state.todos
+    state.todos,
+    // 낙관적인 화면 업데이트를 위한 리듀서 함수 (상태, 액션)
+    (todos, action) => {
+      switch (action.type) {
+        case ACTION_TYPE.ADD_TODO: {
+          const { newTodo } = action.payload
+          return [newTodo, ...todos]
+        }
+        case ACTION_TYPE.EDIT_TODO: {
+          const { editTodo } = action.payload
+          return todos.map((todo) =>
+            todo.id === editTodo.id ? editTodo : todo
+          )
+        }
+        case ACTION_TYPE.REMOVE_TODO: {
+          const { removeId } = action.payload
+          return todos.filter((todo) => todo.id !== removeId)
+        }
+        case ACTION_TYPE.OPTIMISTIC_ROLLBACK:
+        default: {
+          return todos
+        }
+      }
+    }
+  )
+
+  // 액션 함수
+  // - [client / optimistic / server] 할 일 추가
+  // - [client / optimistic / server] 할 일 수정
+  // - [client / optimistic / server] 할 일 삭제
+  // - [only client] 할 일 목록 검색
+  // - [only client] 할 일 목록 완료된 할 일 감추기
   const actions = useMemo(
     () => ({
-      addTodo: (newTodo: Todo) => {
-        dispatch(addTodoAction(newTodo))
+      // 서버 상태 관리 업데이트 함수
+      addTodo: async (newTodo: Todo) => {
+        // 낙관적인(optimistic) 업데이트 수행
+        updateOptimisticTodos(addTodoAction(newTodo))
+
+        try {
+          // 서버 비동기 요청 지연 처리를 위한 유틸리티 함수
+          await wait(1.2, { forceRejected: false })
+          // 실제 Supabase 데이터베이스 todos 테이블에 요청
+          const createdTodo = await createTodo({ doit: newTodo.doit })
+          // 성공: 응답받은 실제 서버 데이터로 상태를 업데이트
+          dispatch(addTodoAction(createdTodo))
+        } catch {
+          // 실패: 낙관적으로 변경한 상태를 롤백(rollback)
+          updateOptimisticTodos(optimisticRollbackAction())
+        }
       },
-      removeTodo: (removeId: Todo['id']) => {
-        dispatch(removeTodoAction(removeId))
+      removeTodo: async (removeId: Todo['id']) => {
+        // 낙관적인(optimistic) 업데이트 수행
+        updateOptimisticTodos(removeTodoAction(removeId))
+
+        try {
+          // 서버 비동기 요청 지연 처리를 위한 유틸리티 함수
+          await wait(1.2, { forceRejected: false })
+          // 실제 Supabase 데이터베이스 todos 테이블에 요청
+          await deleteTodo(removeId)
+          // 성공: 응답받은 실제 서버 데이터로 상태를 업데이트
+          dispatch(removeTodoAction(removeId))
+        } catch {
+          // 실패: 낙관적으로 변경한 상태를 롤백(rollback)
+          updateOptimisticTodos(optimisticRollbackAction())
+        }
       },
-      editTodo: (editTodo: Todo) => {
-        dispatch(editTodoAction(editTodo))
+      editTodo: async (editTodo: Todo) => {
+        // 낙관적인(optimistic) 업데이트 수행
+        updateOptimisticTodos(editTodoAction(editTodo))
+
+        try {
+          // 서버 비동기 요청 지연 처리를 위한 유틸리티 함수
+          await wait(1.2, { forceRejected: true })
+          // 실제 Supabase 데이터베이스 todos 테이블에 요청
+          const updatedTodo = await updateTodo(editTodo)
+          // 성공: 응답받은 실제 서버 데이터로 상태를 업데이트
+          dispatch(editTodoAction(updatedTodo))
+        } catch {
+          // 실패: 낙관적으로 변경한 상태를 롤백(rollback)
+          updateOptimisticTodos(optimisticRollbackAction())
+        }
       },
+
+      // 클라이언트 상태 관리 업데이트 함수
       searchTodos: (search: State['search']) => {
         dispatch(searchTodosAction(search))
       },
@@ -68,7 +164,7 @@ export default function TodoListProvider({
         dispatch(toggleDoneAction())
       },
     }),
-    [dispatch]
+    [dispatch, updateOptimisticTodos]
   )
 
   // --------------------------------------------------------------------------
@@ -103,7 +199,9 @@ export default function TodoListProvider({
 
   return (
     <TodoListDispatchContext value={actions}>
-      <TodoListContext value={state}>{children}</TodoListContext>
+      <TodoListContext value={{ ...state, optimisticTodos }}>
+        {children}
+      </TodoListContext>
     </TodoListDispatchContext>
   )
 }
