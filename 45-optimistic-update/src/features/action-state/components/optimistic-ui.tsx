@@ -55,8 +55,15 @@ export default function OptimisticUI() {
         { ...newMessage, optimistic: true },
       ])
 
-      // 서버의 요청 처리 지연 시뮬레이션
-      await wait(1.5)
+      try {
+        // 서버의 요청 처리 지연 시뮬레이션
+        // 해결(resolved) 또는 거절(rejected) 확인
+        await wait(1.5, { forceRejected: true })
+        return [...prevMessages, newMessage]
+      } catch {
+        // toast.error((error as Error).message)
+        return prevMessages
+      }
 
       // 서버의 응답 데이터로 실제 데이터 업데이트
       return [...prevMessages, newMessage]
