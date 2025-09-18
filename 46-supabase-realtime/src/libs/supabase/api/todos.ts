@@ -1,9 +1,47 @@
 // --------------------------------------------------------------------------
 // ✅ Supabase의 Todos 테이블용 클라이언트 API(함수)
 // --------------------------------------------------------------------------
+import { type RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import { toast } from 'sonner'
 import supabase, { type Todo, type TodoInsert, TodoUpdate } from '../index'
 import requiredUser from './required-user'
+
+// --------------------------------------------------------------------------
+// 리얼타임 (Realtime)
+
+export const realtimeTodos = (
+  callback: (
+    payload: RealtimePostgresChangesPayload<{ [key: string]: unknown }>
+  ) => void
+) => {
+  // 리얼타임 데이터베이스의 테이블을 구독(서브스크립션)
+  // 채널 생성
+  const todosChannel = supabase.channel('public.todos')
+
+  // 생성된 채널의 이벤트 설정
+  todosChannel
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'todos' },
+      (payload) => {
+        // console.log('실시간 데이터베이스 변경 이벤트', payload.eventType)
+        // console.log('변경된 새로운 데이터', payload.new)
+        // console.log('변경 이전 데이터', payload.old)
+        callback(payload)
+      }
+    )
+    .subscribe((status) => {
+      console.log('실시간 todos 데이터베이스 구독 상태:', status)
+    })
+
+  // 구독 중인 데이터베이스 테이블을 구독 해제 함수
+  const unsubscribe = async () => {
+    const result = await supabase.removeChannel(todosChannel)
+    console.log('실시간 todos 데이터베이스 구독 해제 상태:', result)
+  }
+
+  return unsubscribe
+}
 
 // --------------------------------------------------------------------------
 // 생성(Create)

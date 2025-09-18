@@ -8,11 +8,12 @@ import {
 } from 'react'
 import { useImmerReducer } from 'use-immer'
 import { useAuth } from '@/contexts/auth'
-import type { Todo } from '@/libs/supabase'
+import { type Todo } from '@/libs/supabase'
 import {
   createTodo,
   deleteTodo,
   readTodos,
+  realtimeTodos,
   updateTodo,
 } from '@/libs/supabase/api/todos'
 import { wait } from '@/utils'
@@ -98,7 +99,7 @@ export default function TodoListProvider({
       addTodo: async (newTodo: Todo) => {
         updateOptimisticTodos(addTodoAction(newTodo))
         try {
-          await wait(1.2, { forceResolved: true })
+          await wait(1.2, { forceResolved: false })
           const createdTodo = await createTodo({ doit: newTodo.doit })
           dispatch(addTodoAction(createdTodo))
         } catch {
@@ -135,6 +136,36 @@ export default function TodoListProvider({
     }),
     [dispatch, updateOptimisticTodos]
   )
+
+  // [리얼타임 데이터 베이스 변경 감지 이펙트(부수 효과)]
+  useEffect(() => {
+    // 구독 해제 함수 <- public.todos 테이블 변경 감지 구독
+    const unsubscribe = realtimeTodos((payload) => {
+      const { eventType, new: _newData } = payload
+      console.log('페이로드', payload)
+
+      switch (eventType) {
+        case 'INSERT': {
+          console.log('추가')
+          break
+        }
+        case 'UPDATE': {
+          console.log('수정')
+          break
+        }
+        case 'DELETE': {
+          console.log('삭제')
+          break
+        }
+      }
+    })
+
+    // 정리(clean up)
+    return () => {
+      // 구독중인 데이터베이스 테이블을 구독 해제}
+      unsubscribe()
+    }
+  }, [])
 
   // --------------------------------------------------------------------------
   // 인증(Auth)
